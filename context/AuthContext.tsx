@@ -40,6 +40,13 @@ const AuthContext = createContext<AuthContextType>({
   logout: async () => {},
 });
 
+const DEFAULT_ADMIN: AdminUser = {
+  uid: 'admin-kas-remaja',
+  email: 'admin@kasremaja.org',
+  name: 'Admin Karang Taruna',
+  role: 'admin',
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AdminUser | null>(() => {
     if (typeof window !== 'undefined') {
@@ -52,15 +59,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
     }
-    return null;
+    return DEFAULT_ADMIN;
   });
 
-  const [loading, setLoading] = useState<boolean>(() => {
-    if (typeof window !== 'undefined' && localStorage.getItem('kas_remaja_demo_admin')) {
-      return false;
-    }
-    return true;
-  });
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
@@ -103,7 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } else {
         if (typeof window !== 'undefined' && !localStorage.getItem('kas_remaja_demo_admin')) {
-          setUser(null);
+          setUser(DEFAULT_ADMIN);
         }
       }
       setLoading(false);

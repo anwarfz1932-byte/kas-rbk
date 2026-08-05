@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Sidebar, ViewTab } from '../components/Layout/Sidebar';
 import { Navbar } from '../components/Layout/Navbar';
+import { BottomNav } from '../components/Layout/BottomNav';
 import { DashboardView } from '../components/Dashboard/DashboardView';
 import { MembersView } from '../components/Members/MembersView';
 import { HistoryView } from '../components/History/HistoryView';
 import { ReportsView } from '../components/Reports/ReportsView';
-import { LoginView } from '../components/Auth/LoginView';
 import { ChangePasswordModal } from '../components/Auth/ChangePasswordModal';
 import { TransactionModal } from '../components/Transactions/TransactionModal';
 import { MemberModal } from '../components/Members/MemberModal';
@@ -191,11 +191,6 @@ export default function MainPage() {
     );
   }
 
-  // Render Login view if user is not logged in
-  if (!user) {
-    return <LoginView />;
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex text-slate-800 dark:text-slate-100 transition-colors">
       {/* Toast Notification Container */}
@@ -214,12 +209,11 @@ export default function MainPage() {
         {/* Top Navbar */}
         <Navbar
           currentTab={currentTab}
-          onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
           onOpenChangePassword={() => setIsChangePasswordOpen(true)}
         />
 
         {/* Dynamic Main View */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 sm:pb-28 max-w-7xl w-full mx-auto">
           {dataLoading ? (
             <div className="py-20 flex flex-col items-center justify-center text-slate-500">
               <Loader2 className="w-8 h-8 text-emerald-600 animate-spin mb-3" />
@@ -317,6 +311,9 @@ export default function MainPage() {
         message={`Apakah Anda yakin ingin menghapus anggota "${deleteMemberTarget?.nama}"? Seluruh data profil anggota ini akan terhapus.`}
         isLoading={actionLoading}
       />
+
+      {/* Navigation Options Bar at Bottom */}
+      <BottomNav currentTab={currentTab} onSelectTab={setCurrentTab} />
     </div>
   );
 }

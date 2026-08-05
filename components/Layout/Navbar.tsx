@@ -1,14 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Menu, Sun, Moon, LogOut, UserCheck, KeyRound } from 'lucide-react';
+import { Sun, Moon, UserCheck, KeyRound } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { ViewTab } from './Sidebar';
 
 interface NavbarProps {
   currentTab: ViewTab;
-  onOpenMobileSidebar: () => void;
+  onOpenMobileSidebar?: () => void;
   onOpenChangePassword?: () => void;
 }
 
@@ -37,26 +37,18 @@ const tabTitles: Record<ViewTab, { title: string; subtitle: string }> = {
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentTab,
-  onOpenMobileSidebar,
   onOpenChangePassword,
 }) => {
   const { isDarkMode, toggleDarkMode } = useTheme();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const currentInfo = tabTitles[currentTab] || tabTitles.dashboard;
 
   return (
     <header className="sticky top-0 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-gray-200 dark:border-slate-800 px-4 sm:px-6 py-3.5 transition-colors">
       <div className="flex items-center justify-between gap-4 max-w-7xl mx-auto">
-        {/* Left side: Hamburger + Title */}
+        {/* Left side: App Title & Subtitle */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={onOpenMobileSidebar}
-            className="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-800 border border-emerald-100 dark:border-slate-700 transition-colors"
-            aria-label="Buka Menu"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
           <div>
             <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-tight">
               {currentInfo.title}
@@ -69,16 +61,23 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right side: Dark Mode + Admin Profile + Change Password + Logout */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Dark Mode Button */}
+          {/* Dark Mode / Light Mode Toggle Button */}
           <button
             onClick={toggleDarkMode}
-            className="p-2.5 rounded-xl border border-emerald-100 dark:border-slate-700 bg-emerald-50/50 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 hover:bg-emerald-100 dark:hover:bg-slate-700 transition-colors"
-            title={isDarkMode ? 'Mode Terang' : 'Mode Gelap'}
+            className="p-2.5 sm:px-3 sm:py-2 rounded-xl border border-emerald-100 dark:border-slate-700 bg-emerald-50/60 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 hover:bg-emerald-100 dark:hover:bg-slate-700 font-medium text-xs flex items-center gap-2 transition-colors cursor-pointer"
+            title={isDarkMode ? 'Beralih ke Mode Terang' : 'Beralih ke Mode Gelap'}
+            aria-label="Ganti Tema"
           >
             {isDarkMode ? (
-              <Sun className="w-4 h-4 text-amber-400" />
+              <>
+                <Sun className="w-4 h-4 text-amber-400 shrink-0" />
+                <span className="hidden sm:inline font-semibold">Mode Terang</span>
+              </>
             ) : (
-              <Moon className="w-4 h-4 text-slate-600" />
+              <>
+                <Moon className="w-4 h-4 text-slate-600 dark:text-slate-300 shrink-0" />
+                <span className="hidden sm:inline font-semibold">Mode Gelap</span>
+              </>
             )}
           </button>
 
@@ -108,16 +107,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="hidden md:inline">Ganti Password</span>
             </button>
           )}
-
-          {/* Logout Button */}
-          <button
-            onClick={logout}
-            className="p-2.5 sm:px-3 sm:py-2 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/60 font-medium text-xs flex items-center gap-1.5 transition-colors"
-            title="Keluar / Logout"
-          >
-            <LogOut className="w-4 h-4" />
-            <span className="hidden sm:inline">Keluar</span>
-          </button>
         </div>
       </div>
     </header>
