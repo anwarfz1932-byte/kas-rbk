@@ -1,0 +1,40 @@
+{
+  "entities": {
+    "users": {
+      "title": "users",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["email", "role"]
+    },
+    "members": {
+      "title": "members",
+      "type": "object",
+      "properties": {
+        "nama": { "type": "string" },
+        "jabatan": { "type": "string" },
+        "noHp": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["nama"]
+    },
+    "transactions": {
+      "title": "transactions",
+      "type": "object",
+      "properties": {
+        "tanggal": { "type": "string" },
+        "jenis": { "type": "string" },
+        "nominal": { "type": "number" },
+        "keterangan": { "type": "string" },
+        "anggota": { "type": "string" },
+        "anggotaNama": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["tanggal", "jenis", "nominal", "keterangan"]
+    }
+  }
+}
