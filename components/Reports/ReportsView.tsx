@@ -7,14 +7,12 @@ import { formatRupiah, formatDateIndonesian } from '../../lib/formatters';
 import { exportTransactionsToExcel, exportReportToPDF } from '../../lib/exportUtils';
 import {
   FileSpreadsheet,
-  FileText,
   Calendar,
   Wallet,
   TrendingUp,
   TrendingDown,
   Printer,
   Download,
-  BarChart2,
 } from 'lucide-react';
 
 interface ReportsViewProps {
@@ -93,14 +91,14 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
   return (
     <div className="space-y-6">
       {/* Filter Card */}
-      <Card className="p-5">
+      <Card className="p-5 border-slate-200 shadow-sm bg-white">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
               <Calendar className="w-5 h-5 text-red-600" />
               Pilih Periode Laporan Keuangan
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Sesuaikan data yang ingin dicetak atau diexport
             </p>
           </div>
@@ -116,10 +114,10 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
               <button
                 key={p.id}
                 onClick={() => setPeriodPreset(p.id as any)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   periodPreset === p.id
                     ? 'bg-red-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-slate-700'
+                    : 'bg-slate-100 text-slate-700 hover:bg-red-50 hover:text-red-700'
                 }`}
               >
                 {p.label}
@@ -130,23 +128,23 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
 
         {/* Custom date range inputs */}
         {periodPreset === 'custom' && (
-          <div className="mt-4 pt-4 border-t border-red-100 dark:border-slate-700 flex flex-wrap items-center gap-3">
+          <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-slate-600 dark:text-slate-300 font-medium">Mulai:</span>
+              <span className="text-slate-700 font-bold">Mulai:</span>
               <input
                 type="date"
                 value={customStart}
                 onChange={(e) => setCustomStart(e.target.value)}
-                className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs focus:ring-2 focus:ring-red-500 outline-none"
+                className="px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none font-bold"
               />
             </div>
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-slate-600 dark:text-slate-300 font-medium">Sampai:</span>
+              <span className="text-slate-700 font-bold">Sampai:</span>
               <input
                 type="date"
                 value={customEnd}
                 onChange={(e) => setCustomEnd(e.target.value)}
-                className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs focus:ring-2 focus:ring-red-500 outline-none"
+                className="px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none font-bold"
               />
             </div>
           </div>
@@ -156,60 +154,60 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
       {/* Summary Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Total Pemasukan */}
-        <Card className="bg-emerald-50/70 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800">
+        <Card className="bg-white border-emerald-200 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider">
+              <p className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
                 Total Pemasukan
               </p>
-              <h4 className="text-2xl font-black text-emerald-700 dark:text-emerald-400 mt-1">
+              <h4 className="text-2xl font-black text-emerald-600 mt-1">
                 {formatRupiah(totalPemasukan)}
               </h4>
-              <p className="text-[11px] text-emerald-600/80 dark:text-emerald-400/80 mt-1">
+              <p className="text-[11px] text-slate-500 font-medium mt-1">
                 {filteredTransactions.filter((t) => t.jenis === 'Pemasukan').length} transaksi masuk
               </p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-xs shrink-0">
               <TrendingUp className="w-6 h-6" />
             </div>
           </div>
         </Card>
 
         {/* Total Pengeluaran */}
-        <Card className="bg-rose-50/70 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800">
+        <Card className="bg-white border-red-200 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-rose-800 dark:text-rose-300 uppercase tracking-wider">
+              <p className="text-xs font-bold text-red-800 uppercase tracking-wider">
                 Total Pengeluaran
               </p>
-              <h4 className="text-2xl font-black text-rose-700 dark:text-rose-400 mt-1">
+              <h4 className="text-2xl font-black text-red-600 mt-1">
                 {formatRupiah(totalPengeluaran)}
               </h4>
-              <p className="text-[11px] text-rose-600/80 dark:text-rose-400/80 mt-1">
+              <p className="text-[11px] text-slate-500 font-medium mt-1">
                 {filteredTransactions.filter((t) => t.jenis === 'Pengeluaran').length} transaksi keluar
               </p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-rose-600 text-white flex items-center justify-center shadow-md shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-red-600 text-white flex items-center justify-center shadow-xs shrink-0">
               <TrendingDown className="w-6 h-6" />
             </div>
           </div>
         </Card>
 
         {/* Saldo Akhir */}
-        <Card className="bg-slate-900 text-white border-slate-800 dark:bg-slate-800">
+        <Card className="bg-red-600 text-white border-red-700 shadow-md">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+              <p className="text-xs font-bold text-red-100 uppercase tracking-wider">
                 Saldo Akhir Kas
               </p>
               <h4 className="text-2xl font-black text-white mt-1">
                 {formatRupiah(saldoAkhir)}
               </h4>
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-[11px] text-red-100 font-medium mt-1">
                 Status: {saldoAkhir >= 0 ? 'Surplus / Sehat' : 'Defisit'}
               </p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-md shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-white text-red-600 flex items-center justify-center shadow-xs shrink-0">
               <Wallet className="w-6 h-6" />
             </div>
           </div>
@@ -217,27 +215,27 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
       </div>
 
       {/* Export Action Card */}
-      <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 border-red-200 dark:border-slate-700 bg-gradient-to-r from-red-50/60 to-rose-50/40 dark:from-slate-800 dark:to-slate-800">
+      <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 border-red-200 bg-red-50/60 shadow-xs">
         <div>
-          <h4 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <h4 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <Printer className="w-5 h-5 text-red-600" />
             Cetak & Export Laporan Official
           </h4>
-          <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
+          <p className="text-xs text-slate-600 mt-1 font-medium">
             Unduh laporan terformat rapi dengan kop resmi organisasi remaja ({getPeriodeLabel()})
           </p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={handleExportExcel}
-            className="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 font-semibold text-xs sm:text-sm transition-all shadow-xs flex items-center gap-2 cursor-pointer"
+            className="px-4 py-2.5 rounded-xl bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 font-bold text-xs sm:text-sm transition-all shadow-xs flex items-center gap-2 cursor-pointer"
           >
             <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
             Export Excel (.xlsx)
           </button>
           <button
             onClick={handlePrintPDF}
-            className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs sm:text-sm transition-all shadow-md shadow-red-600/20 flex items-center gap-2 cursor-pointer"
+            className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm transition-all shadow-md shadow-red-600/20 flex items-center gap-2 cursor-pointer active:scale-95"
           >
             <Download className="w-4 h-4" />
             Cetak PDF (.pdf)
@@ -246,13 +244,13 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
       </Card>
 
       {/* Report Preview Table */}
-      <Card className="p-0 overflow-hidden">
-        <div className="px-6 py-4 border-b border-red-100 dark:border-slate-700 bg-red-50/40 dark:bg-slate-800/60 flex items-center justify-between">
+      <Card className="p-0 overflow-hidden border-slate-200 shadow-sm">
+        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
           <div>
-            <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">
+            <h4 className="text-sm font-bold text-slate-800">
               Preview Tabel Laporan ({getPeriodeLabel()})
             </h4>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 font-medium">
               Menampilkan {filteredTransactions.length} baris transaksi
             </p>
           </div>
@@ -261,7 +259,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-sm">
             <thead>
-              <tr className="border-b border-red-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/90 text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+              <tr className="bg-red-600 text-white text-xs font-bold uppercase tracking-wider">
                 <th className="py-3.5 px-4 text-center w-12">No</th>
                 <th className="py-3.5 px-4">Tanggal</th>
                 <th className="py-3.5 px-4">Jenis</th>
@@ -270,10 +268,10 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
                 <th className="py-3.5 px-4 text-right">Nominal</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-emerald-50 dark:divide-slate-700/60">
+            <tbody className="divide-y divide-slate-100 bg-white">
               {filteredTransactions.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400">
+                  <td colSpan={6} className="py-12 text-center text-slate-400 font-medium">
                     Tidak ada transaksi dalam periode ini.
                   </td>
                 </tr>
@@ -281,34 +279,34 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
                 filteredTransactions.map((tx, idx) => (
                   <tr
                     key={tx.id}
-                    className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
+                    className="hover:bg-red-50/40 transition-colors"
                   >
-                    <td className="py-3 px-4 text-center font-medium text-slate-500">{idx + 1}</td>
-                    <td className="py-3 px-4 font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                    <td className="py-3 px-4 text-center font-bold text-slate-500">{idx + 1}</td>
+                    <td className="py-3 px-4 font-semibold text-slate-700 whitespace-nowrap">
                       {formatDateIndonesian(tx.tanggal)}
                     </td>
                     <td className="py-3 px-4">
                       <span
-                        className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold ${
+                        className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-bold ${
                           tx.jenis === 'Pemasukan'
-                            ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
-                            : 'bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300'
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : 'bg-red-100 text-red-800'
                         }`}
                       >
                         {tx.jenis}
                       </span>
                     </td>
-                    <td className="py-3 px-4 font-semibold text-slate-800 dark:text-slate-200">
+                    <td className="py-3 px-4 font-bold text-slate-800">
                       {tx.keterangan}
                     </td>
-                    <td className="py-3 px-4 text-slate-600 dark:text-slate-300">
+                    <td className="py-3 px-4 text-slate-600 font-medium">
                       {tx.anggotaNama || '-'}
                     </td>
                     <td
-                      className={`py-3 px-4 text-right font-bold whitespace-nowrap ${
+                      className={`py-3 px-4 text-right font-black whitespace-nowrap ${
                         tx.jenis === 'Pemasukan'
-                          ? 'text-emerald-600 dark:text-emerald-400'
-                          : 'text-rose-600 dark:text-rose-400'
+                          ? 'text-emerald-600'
+                          : 'text-red-600'
                       }`}
                     >
                       {tx.jenis === 'Pemasukan' ? '+' : '-'} {formatRupiah(tx.nominal)}

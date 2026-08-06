@@ -53,8 +53,8 @@ export function exportReportToPDF(
   // Header banner / title
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(185, 28, 28); // Red 700 (Merah Putih theme)
-  doc.text('PENGELOLA UANG KAS REMAJA', 14, 18);
+  doc.setTextColor(185, 28, 28); // Red 700
+  doc.text('PENGELOLA UANG KAS REMAJA BLATER KIDUL', 14, 18);
 
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');

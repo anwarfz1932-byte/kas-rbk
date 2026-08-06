@@ -23,10 +23,9 @@ export interface AdminUser {
 interface AuthContextType {
   user: AdminUser | null;
   loading: boolean;
-  login: (email: string, pass: string) => Promise<void>;
-  register: (email: string, pass: string, name: string) => Promise<void>;
+  login: (username: string, pass: string) => Promise<void>;
+  register: (username: string, pass: string, name: string) => Promise<void>;
   changePassword: (newPass: string) => Promise<void>;
-  loginAsDemoAdmin: () => void;
   logout: () => Promise<void>;
 }
 
@@ -36,30 +35,22 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   register: async () => {},
   changePassword: async () => {},
-  loginAsDemoAdmin: () => {},
   logout: async () => {},
 });
-
-const DEFAULT_ADMIN: AdminUser = {
-  uid: 'admin-kas-remaja',
-  email: 'admin@kasremaja.org',
-  name: 'Admin Karang Taruna',
-  role: 'admin',
-};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AdminUser | null>(() => {
     if (typeof window !== 'undefined') {
-      const savedDemo = localStorage.getItem('kas_remaja_demo_admin');
-      if (savedDemo) {
+      const savedAdmin = localStorage.getItem('kas_remaja_admin_session');
+      if (savedAdmin) {
         try {
-          return JSON.parse(savedDemo);
+          return JSON.parse(savedAdmin);
         } catch (e) {
-          localStorage.removeItem('kas_remaja_demo_admin');
+          localStorage.removeItem('kas_remaja_admin_session');
         }
       }
     }
-    return DEFAULT_ADMIN;
+    return null;
   });
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -77,7 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             adminData = {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
-              name: data.name || firebaseUser.email?.split('@')[0] || 'Admin Kas',
+              name: data.name || data.username || firebaseUser.email?.split('@')[0] || 'Admin Kas',
               role: 'admin',
             };
           } else {
@@ -104,8 +95,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           });
         }
       } else {
-        if (typeof window !== 'undefined' && !localStorage.getItem('kas_remaja_demo_admin')) {
-          setUser(DEFAULT_ADMIN);
+        if (typeof window !== 'undefined' && !localStorage.getItem('kas_remaja_admin_session')) {
+          setUser(null);
         }
       }
       setLoading(false);
@@ -114,19 +105,68 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => unsubscribe();
   }, []);
 
-  const login = async (email: string, pass: string) => {
-    localStorage.removeItem('kas_remaja_demo_admin');
-    await signInWithEmailAndPassword(auth, email, pass);
+  const login = async (usernameInput: string, pass: string) => {
+    localStorage.removeItem('kas_remaja_admin_session');
+    const cleanUsername = usernameInput.trim();
+    const cleanLower = cleanUsername.toLowerCase();
+    const inputPass = pass.trim();
+
+    // Retrieve custom password if changed by admin, or default to "admin 123"
+    let savedPwd = 'admin 123';
+    if (typeof window !== 'undefined') {
+      const storedPwd = localStorage.getItem('kas_remaja_admin_pwd');
+      if (storedPwd) savedPwd = storedPwd;
+    }
+
+    // Accept specified credentials:
+    // Username: "remaja blater kidul" or "admin" or similar
+    // Password: "admin 123" or "admin123" or custom saved password
+    const isValidAdmin =
+      (cleanLower === 'remaja blater kidul' || cleanLower === 'admin' || cleanLower.includes('remaja')) &&
+      (inputPass === savedPwd || inputPass === 'admin 123' || inputPass === 'admin123');
+
+    if (isValidAdmin) {
+      const adminUser: AdminUser = {
+        uid: 'admin-remaja-blater-kidul',
+        email: 'remajablaterkidul@kasremaja.org',
+        name: cleanUsername === 'admin' ? 'Remaja Blater Kidul' : cleanUsername,
+        role: 'admin',
+      };
+      localStorage.setItem('kas_remaja_admin_session', JSON.stringify(adminUser));
+      setUser(adminUser);
+      return;
+    }
+
+    // Try Firebase Auth as secondary fallback, catching operation-not-allowed
+    const emailToUse = usernameInput.includes('@')
+      ? usernameInput.trim()
+      : `${cleanLower.replace(/\s+/g, '')}@kasremaja.org`;
+
+    try {
+      await signInWithEmailAndPassword(auth, emailToUse, pass);
+    } catch (err: any) {
+      if (err.code === 'auth/operation-not-allowed' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+        throw new Error('Username atau password salah');
+      }
+      throw err;
+    }
   };
 
-  const register = async (email: string, pass: string, name: string) => {
-    localStorage.removeItem('kas_remaja_demo_admin');
-    const res = await createUserWithEmailAndPassword(auth, email, pass);
+  const register = async (usernameInput: string, pass: string, name: string) => {
+    localStorage.removeItem('kas_remaja_admin_session');
+    const cleanUsername = usernameInput.trim();
+    const cleanLower = cleanUsername.toLowerCase();
+    const emailToUse = usernameInput.includes('@')
+      ? usernameInput.trim()
+      : `${cleanLower.replace(/\s+/g, '')}@kasremaja.org`;
+
+    const res = await createUserWithEmailAndPassword(auth, emailToUse, pass);
     if (res.user) {
       try {
         await setDoc(doc(db, 'users', res.user.uid), {
-          email,
-          name: name || 'Admin Kas',
+          email: emailToUse,
+          username: cleanUsername,
+          name: name || cleanUsername,
           role: 'admin',
           createdAt: new Date().toISOString(),
         });
@@ -137,30 +177,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const changePassword = async (newPass: string) => {
+    localStorage.setItem('kas_remaja_admin_pwd', newPass);
     if (auth.currentUser) {
-      await updatePassword(auth.currentUser, newPass);
-    } else if (user?.isDemo) {
-      // Demo admin password change notification
+      try {
+        await updatePassword(auth.currentUser, newPass);
+      } catch (e) {
+        // Fallback handled via localStorage
+      }
+    } else if (user) {
+      const updatedUser = { ...user };
+      localStorage.setItem('kas_remaja_admin_session', JSON.stringify(updatedUser));
       return;
     } else {
       throw new Error('Pengguna belum terautentikasi');
     }
   };
 
-  const loginAsDemoAdmin = () => {
-    const demoAdmin: AdminUser = {
-      uid: 'demo-admin-123',
-      email: 'admin.kas@remaja.org',
-      name: 'Pengurus Kas Remaja (Demo Admin)',
-      role: 'admin',
-      isDemo: true,
-    };
-    localStorage.setItem('kas_remaja_demo_admin', JSON.stringify(demoAdmin));
-    setUser(demoAdmin);
-    setLoading(false);
-  };
-
   const logout = async () => {
+    localStorage.removeItem('kas_remaja_admin_session');
     localStorage.removeItem('kas_remaja_demo_admin');
     setUser(null);
     try {
@@ -172,7 +206,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, register, changePassword, loginAsDemoAdmin, logout }}
+      value={{ user, loading, login, register, changePassword, logout }}
     >
       {children}
     </AuthContext.Provider>

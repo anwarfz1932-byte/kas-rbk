@@ -6,10 +6,9 @@ import { Sidebar, ViewTab } from '../components/Layout/Sidebar';
 import { Navbar } from '../components/Layout/Navbar';
 import { BottomNav } from '../components/Layout/BottomNav';
 import { DashboardView } from '../components/Dashboard/DashboardView';
-import { MembersView } from '../components/Members/MembersView';
 import { HistoryView } from '../components/History/HistoryView';
 import { ReportsView } from '../components/Reports/ReportsView';
-import { ChangePasswordModal } from '../components/Auth/ChangePasswordModal';
+import { LoginModal } from '../components/Auth/LoginModal';
 import { TransactionModal } from '../components/Transactions/TransactionModal';
 import { MemberModal } from '../components/Members/MemberModal';
 import { ConfirmModal } from '../components/UI/ConfirmModal';
@@ -50,7 +49,7 @@ export default function MainPage() {
   const [isMemberModalOpen, setIsMemberModalOpen] = useState<boolean>(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
 
-  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState<boolean>(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
   // Delete confirm modals state
   const [deleteTxTarget, setDeleteTxTarget] = useState<Transaction | null>(null);
@@ -73,8 +72,6 @@ export default function MainPage() {
 
   // Subscribe to Firestore data
   useEffect(() => {
-    if (!user) return;
-
     let memberLoaded = false;
     let txLoaded = false;
 
@@ -100,21 +97,38 @@ export default function MainPage() {
       unsubMembers();
       unsubTx();
     };
-  }, [user]);
+  }, []);
+
+  const isAdmin = !!user;
 
   // Handlers for Transactions
   const handleOpenAddTx = (jenis: 'Pemasukan' | 'Pengeluaran' = 'Pemasukan') => {
+    if (!isAdmin) {
+      addToast('info', 'Silakan login sebagai admin untuk menambah transaksi kas.');
+      setIsLoginModalOpen(true);
+      return;
+    }
     setEditingTx(null);
     setTxModalDefaultJenis(jenis);
     setIsTxModalOpen(true);
   };
 
   const handleOpenEditTx = (tx: Transaction) => {
+    if (!isAdmin) {
+      addToast('info', 'Silakan login sebagai admin untuk mengedit transaksi kas.');
+      setIsLoginModalOpen(true);
+      return;
+    }
     setEditingTx(tx);
     setIsTxModalOpen(true);
   };
 
   const handleSubmitTx = async (txData: Omit<Transaction, 'id' | 'createdAt'>) => {
+    if (!isAdmin) {
+      addToast('error', 'Hanya admin yang memiliki wewenang menambah atau mengedit transaksi.');
+      setIsLoginModalOpen(true);
+      return;
+    }
     if (editingTx) {
       await updateTransactionData(editingTx.id, txData);
       addToast('success', `Berhasil memperbarui transaksi ${txData.keterangan}`);
@@ -129,6 +143,12 @@ export default function MainPage() {
 
   const handleConfirmDeleteTx = async () => {
     if (!deleteTxTarget) return;
+    if (!isAdmin) {
+      addToast('error', 'Hanya admin yang dapat menghapus transaksi.');
+      setIsLoginModalOpen(true);
+      setDeleteTxTarget(null);
+      return;
+    }
     try {
       setActionLoading(true);
       await deleteTransactionData(deleteTxTarget.id);
@@ -143,11 +163,21 @@ export default function MainPage() {
 
   // Handlers for Members
   const handleOpenAddMember = () => {
+    if (!isAdmin) {
+      addToast('info', 'Silakan login sebagai admin untuk menambah anggota baru.');
+      setIsLoginModalOpen(true);
+      return;
+    }
     setEditingMember(null);
     setIsMemberModalOpen(true);
   };
 
   const handleOpenEditMember = (m: Member) => {
+    if (!isAdmin) {
+      addToast('info', 'Silakan login sebagai admin untuk mengedit data anggota.');
+      setIsLoginModalOpen(true);
+      return;
+    }
     setEditingMember(m);
     setIsMemberModalOpen(true);
   };
@@ -182,17 +212,17 @@ export default function MainPage() {
   // Render Auth Loading State
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-emerald-50 dark:bg-slate-900 flex flex-col items-center justify-center p-4">
-        <Loader2 className="w-10 h-10 text-emerald-600 animate-spin mb-3" />
-        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-          Memuat Sistem Kas Remaja...
+      <div className="min-h-screen bg-red-50 flex flex-col items-center justify-center p-4">
+        <Loader2 className="w-10 h-10 text-red-600 animate-spin mb-3" />
+        <p className="text-sm font-bold text-slate-800">
+          Memuat Sistem Kas Remaja Merah Putih...
         </p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex text-slate-800 dark:text-slate-100 transition-colors">
+    <div className="min-h-screen bg-slate-50 flex text-slate-800 transition-colors">
       {/* Toast Notification Container */}
       <ToastContainer toasts={toasts} onClose={removeToast} />
 
@@ -209,7 +239,8 @@ export default function MainPage() {
         {/* Top Navbar */}
         <Navbar
           currentTab={currentTab}
-          onOpenChangePassword={() => setIsChangePasswordOpen(true)}
+          onOpenLoginModal={() => setIsLoginModalOpen(true)}
+          onLogoutToast={(msg) => addToast('info', msg)}
         />
 
         {/* Dynamic Main View */}
@@ -228,16 +259,8 @@ export default function MainPage() {
                   onOpenTxModal={handleOpenAddTx}
                   onOpenMemberModal={handleOpenAddMember}
                   onSelectTab={setCurrentTab}
-                />
-              )}
-
-              {currentTab === 'members' && (
-                <MembersView
-                  members={members}
-                  transactions={transactions}
-                  onOpenAddModal={handleOpenAddMember}
-                  onOpenEditModal={handleOpenEditMember}
-                  onOpenDeleteConfirm={setDeleteMemberTarget}
+                  isAdmin={isAdmin}
+                  onOpenLoginModal={() => setIsLoginModalOpen(true)}
                 />
               )}
 
@@ -248,6 +271,8 @@ export default function MainPage() {
                   onOpenAddModal={handleOpenAddTx}
                   onOpenEditModal={handleOpenEditTx}
                   onOpenDeleteConfirm={setDeleteTxTarget}
+                  isAdmin={isAdmin}
+                  onOpenLoginModal={() => setIsLoginModalOpen(true)}
                 />
               )}
 
@@ -258,6 +283,8 @@ export default function MainPage() {
                   onOpenAddModal={handleOpenAddTx}
                   onOpenEditModal={handleOpenEditTx}
                   onOpenDeleteConfirm={setDeleteTxTarget}
+                  isAdmin={isAdmin}
+                  onOpenLoginModal={() => setIsLoginModalOpen(true)}
                 />
               )}
 
@@ -285,10 +312,10 @@ export default function MainPage() {
         initialData={editingMember}
       />
 
-      {/* Change Password Modal */}
-      <ChangePasswordModal
-        isOpen={isChangePasswordOpen}
-        onClose={() => setIsChangePasswordOpen(false)}
+      {/* Login Admin Modal */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
         onSuccessToast={(msg) => addToast('success', msg)}
       />
 

@@ -39,23 +39,23 @@ const ToastItem: React.FC<{ toast: ToastMessage; onClose: (id: string) => void }
 
   return (
     <div
-      className={`flex items-center justify-between p-4 rounded-xl border shadow-lg transition-all duration-300 animate-in slide-in-from-bottom-2 ${
+      className={`flex items-center justify-between p-4 rounded-xl border shadow-xl transition-all duration-300 animate-in slide-in-from-bottom-2 ${
         isSuccess
-          ? 'bg-emerald-50 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-700 text-emerald-900 dark:text-emerald-100'
-          : 'bg-rose-50 dark:bg-rose-950/80 border-rose-300 dark:border-rose-700 text-rose-900 dark:text-rose-100'
+          ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+          : 'bg-red-50 border-red-300 text-red-900'
       }`}
     >
       <div className="flex items-center gap-3">
         {isSuccess ? (
-          <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
         ) : (
-          <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
+          <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
         )}
-        <p className="text-sm font-medium leading-snug">{toast.message}</p>
+        <p className="text-xs sm:text-sm font-bold leading-snug">{toast.message}</p>
       </div>
       <button
         onClick={() => onClose(toast.id)}
-        className="p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-slate-500 dark:text-slate-400"
+        className="p-1 rounded-lg hover:bg-black/5 transition-colors text-slate-500 cursor-pointer"
       >
         <X className="w-4 h-4" />
       </button>

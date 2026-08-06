@@ -50,15 +50,15 @@ const MemberForm: React.FC<{
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {errorMsg && (
-        <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-200 text-xs font-semibold">
+        <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
           {errorMsg}
         </div>
       )}
 
       {/* Nama */}
       <div>
-        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-          Nama Lengkap <span className="text-rose-500">*</span>
+        <label className="block text-xs font-bold text-slate-700 mb-1">
+          Nama Lengkap <span className="text-red-600">*</span>
         </label>
         <div className="relative">
           <User className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -68,14 +68,14 @@ const MemberForm: React.FC<{
             value={nama}
             onChange={(e) => setNama(e.target.value)}
             required
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none font-medium"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs sm:text-sm focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none font-bold"
           />
         </div>
       </div>
 
       {/* Jabatan / Peranan */}
       <div>
-        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+        <label className="block text-xs font-bold text-slate-700 mb-1">
           Jabatan / Peranan dalam Organisasi
         </label>
         <div className="relative">
@@ -83,7 +83,7 @@ const MemberForm: React.FC<{
           <select
             value={jabatan}
             onChange={(e) => setJabatan(e.target.value)}
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none font-medium"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs sm:text-sm focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none font-bold cursor-pointer"
           >
             <option value="Ketua Remaja">Ketua Remaja</option>
             <option value="Wakil Ketua">Wakil Ketua</option>
@@ -97,7 +97,7 @@ const MemberForm: React.FC<{
 
       {/* No HP */}
       <div>
-        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+        <label className="block text-xs font-bold text-slate-700 mb-1">
           Nomor WhatsApp / HP
         </label>
         <div className="relative">
@@ -107,24 +107,24 @@ const MemberForm: React.FC<{
             placeholder="Contoh: 081234567890"
             value={noHp}
             onChange={(e) => setNoHp(e.target.value)}
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs sm:text-sm focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none"
           />
         </div>
       </div>
 
       {/* Action buttons */}
-      <div className="flex items-center gap-3 pt-3 border-t border-slate-100 dark:border-slate-700">
+      <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
         <button
           type="button"
           onClick={onClose}
-          className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 font-medium text-sm transition-colors"
+          className="flex-1 py-2.5 rounded-xl border border-red-600 text-red-600 bg-white hover:bg-red-50 font-bold text-xs sm:text-sm transition-colors cursor-pointer"
         >
           Batal
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-colors shadow-sm"
+          className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm transition-colors shadow-xs cursor-pointer active:scale-95"
         >
           {loading ? 'Menyimpan...' : 'Simpan Data Anggota'}
         </button>

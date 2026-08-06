@@ -1,6 +1,6 @@
 {
-  "name": "Pengelola Uang Kas Remaja",
-  "description": "Aplikasi pengelolaan uang kas remaja untuk pengurus organisasi remaja dengan pencatatan anggota, transaksi, laporan PDF/Excel, dan otentikasi admin.",
+  "name": "Pengelola Uang Kas Remaja Blater Kidul",
+  "description": "Aplikasi pengelolaan uang kas Remaja Blater Kidul untuk pengurus organisasi remaja dengan pencatatan transaksi, laporan PDF/Excel, dan otentikasi admin.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

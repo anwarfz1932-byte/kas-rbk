@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Modal } from '../UI/Modal';
 import { Member, Transaction } from '../../lib/dataService';
 import { getTodayDateString, formatRupiah } from '../../lib/formatters';
-import { ArrowDownRight, ArrowUpRight, DollarSign, Calendar, User, FileText } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, DollarSign, Calendar, FileText } from 'lucide-react';
 
 interface TransactionModalProps {
   isOpen: boolean;
@@ -21,7 +21,7 @@ const TransactionForm: React.FC<{
   initialData?: Transaction | null;
   members: Member[];
   defaultJenis?: 'Pemasukan' | 'Pengeluaran';
-}> = ({ onClose, onSubmit, initialData, members, defaultJenis = 'Pemasukan' }) => {
+}> = ({ onClose, onSubmit, initialData, defaultJenis = 'Pemasukan' }) => {
   const [jenis, setJenis] = useState<'Pemasukan' | 'Pengeluaran'>(
     initialData?.jenis || defaultJenis
   );
@@ -32,7 +32,6 @@ const TransactionForm: React.FC<{
     initialData?.nominal ? initialData.nominal.toString() : ''
   );
   const [keterangan, setKeterangan] = useState<string>(initialData?.keterangan || '');
-  const [anggotaId, setAnggotaId] = useState<string>(initialData?.anggota || '');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -57,12 +56,6 @@ const TransactionForm: React.FC<{
       return;
     }
 
-    let selectedAnggotaNama = 'Umum / Non-Anggota';
-    if (anggotaId) {
-      const found = members.find((m) => m.id === anggotaId);
-      if (found) selectedAnggotaNama = found.nama;
-    }
-
     try {
       setLoading(true);
       const txPayload: Omit<Transaction, 'id' | 'createdAt'> = {
@@ -70,10 +63,10 @@ const TransactionForm: React.FC<{
         jenis,
         nominal: parsedNominal,
         keterangan: keterangan.trim(),
-        anggotaNama: selectedAnggotaNama,
+        anggotaNama: initialData?.anggotaNama || 'Kas Remaja',
       };
-      if (anggotaId) {
-        txPayload.anggota = anggotaId;
+      if (initialData?.anggota) {
+        txPayload.anggota = initialData.anggota;
       }
       await onSubmit(txPayload);
       setLoading(false);
@@ -87,48 +80,48 @@ const TransactionForm: React.FC<{
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {errorMsg && (
-        <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-200 text-xs font-semibold">
+        <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
           {errorMsg}
         </div>
       )}
 
       {/* Jenis Transaksi Switch */}
       <div>
-        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-          Jenis Transaksi <span className="text-rose-500">*</span>
+        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+          Jenis Transaksi <span className="text-red-600">*</span>
         </label>
         <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
             onClick={() => setJenis('Pemasukan')}
-            className={`flex items-center justify-center gap-2 p-3 rounded-xl font-semibold text-sm border transition-all ${
+            className={`flex items-center justify-center gap-2 p-3 rounded-xl font-bold text-xs sm:text-sm border transition-all cursor-pointer ${
               jenis === 'Pemasukan'
-                ? 'bg-red-600 text-white border-red-600 shadow-sm'
-                : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-slate-700'
+                ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                : 'bg-white border-slate-300 text-slate-700 hover:bg-emerald-50'
             }`}
           >
             <ArrowDownRight className="w-4 h-4" />
-            Pemasukan (Uang Masuk)
+            Pemasukan (+)
           </button>
           <button
             type="button"
             onClick={() => setJenis('Pengeluaran')}
-            className={`flex items-center justify-center gap-2 p-3 rounded-xl font-semibold text-sm border transition-all ${
+            className={`flex items-center justify-center gap-2 p-3 rounded-xl font-bold text-xs sm:text-sm border transition-all cursor-pointer ${
               jenis === 'Pengeluaran'
-                ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
-                : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-slate-700'
+                ? 'bg-red-600 text-white border-red-600 shadow-xs'
+                : 'bg-white border-slate-300 text-slate-700 hover:bg-red-50'
             }`}
           >
             <ArrowUpRight className="w-4 h-4" />
-            Pengeluaran (Uang Keluar)
+            Pengeluaran (-)
           </button>
         </div>
       </div>
 
       {/* Tanggal */}
       <div>
-        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-          Tanggal Transaksi <span className="text-rose-500">*</span>
+        <label className="block text-xs font-bold text-slate-700 mb-1">
+          Tanggal Transaksi <span className="text-red-600">*</span>
         </label>
         <div className="relative">
           <Calendar className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -137,15 +130,15 @@ const TransactionForm: React.FC<{
             value={tanggal}
             onChange={(e) => setTanggal(e.target.value)}
             required
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs sm:text-sm focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none"
           />
         </div>
       </div>
 
       {/* Nominal */}
       <div>
-        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-          Nominal (Rp) <span className="text-rose-500">*</span>
+        <label className="block text-xs font-bold text-slate-700 mb-1">
+          Nominal (Rp) <span className="text-red-600">*</span>
         </label>
         <div className="relative">
           <DollarSign className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -156,11 +149,11 @@ const TransactionForm: React.FC<{
             value={nominal}
             onChange={(e) => setNominal(e.target.value)}
             required
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none font-medium"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs sm:text-sm focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none font-bold"
           />
         </div>
         {nominal && !isNaN(parseFloat(nominal)) && parseFloat(nominal) > 0 && (
-          <p className="text-xs text-red-600 dark:text-red-400 mt-1 font-semibold">
+          <p className="text-xs text-red-600 mt-1 font-bold">
             Format: {formatRupiah(parseFloat(nominal))}
           </p>
         )}
@@ -168,7 +161,7 @@ const TransactionForm: React.FC<{
 
       {/* Anggota */}
       <div>
-        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+        <label className="block text-xs font-bold text-slate-700 mb-1">
           Pilih Anggota {jenis === 'Pemasukan' ? '(Opsional / Sumber Iuran)' : '(Opsional)'}
         </label>
         <div className="relative">
@@ -176,7 +169,7 @@ const TransactionForm: React.FC<{
           <select
             value={anggotaId}
             onChange={(e) => setAnggotaId(e.target.value)}
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs sm:text-sm focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none cursor-pointer"
           >
             <option value="">-- Umum / Non-Anggota --</option>
             {members.map((m) => (
@@ -190,8 +183,8 @@ const TransactionForm: React.FC<{
 
       {/* Keterangan */}
       <div>
-        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-          Keterangan / Rincian <span className="text-rose-500">*</span>
+        <label className="block text-xs font-bold text-slate-700 mb-1">
+          Keterangan / Rincian <span className="text-red-600">*</span>
         </label>
         <div className="relative">
           <FileText className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
@@ -201,28 +194,24 @@ const TransactionForm: React.FC<{
             value={keterangan}
             onChange={(e) => setKeterangan(e.target.value)}
             required
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs sm:text-sm focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none"
           />
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center gap-3 pt-3 border-t border-slate-100 dark:border-slate-700">
+      <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
         <button
           type="button"
           onClick={onClose}
-          className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 font-medium text-sm transition-colors"
+          className="flex-1 py-2.5 rounded-xl border border-red-600 text-red-600 bg-white hover:bg-red-50 font-bold text-xs sm:text-sm transition-colors cursor-pointer"
         >
           Batal
         </button>
         <button
           type="submit"
           disabled={loading}
-          className={`flex-1 py-2.5 rounded-xl font-semibold text-sm text-white transition-colors shadow-sm ${
-            jenis === 'Pemasukan'
-              ? 'bg-red-600 hover:bg-red-700'
-              : 'bg-rose-600 hover:bg-rose-700'
-          }`}
+          className="flex-1 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white bg-red-600 hover:bg-red-700 transition-colors shadow-xs cursor-pointer active:scale-95"
         >
           {loading ? 'Menyimpan...' : 'Simpan Transaksi'}
         </button>

@@ -24,17 +24,17 @@ export const Pagination: React.FC<PaginationProps> = ({
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-emerald-100 dark:border-slate-700 text-sm">
-      <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">
-        Menampilkan <span className="font-semibold text-slate-700 dark:text-slate-200">{startItem}</span> -{' '}
-        <span className="font-semibold text-slate-700 dark:text-slate-200">{endItem}</span> dari{' '}
-        <span className="font-semibold text-slate-700 dark:text-slate-200">{totalItems}</span> data
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-200 text-xs sm:text-sm">
+      <p className="text-slate-500 font-medium">
+        Menampilkan <span className="font-bold text-slate-800">{startItem}</span> -{' '}
+        <span className="font-bold text-slate-800">{endItem}</span> dari{' '}
+        <span className="font-bold text-slate-800">{totalItems}</span> data
       </p>
       <div className="flex items-center gap-1">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="p-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-red-50 hover:border-red-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
           title="Halaman Sebelumnya"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -54,14 +54,14 @@ export const Pagination: React.FC<PaginationProps> = ({
             return (
               <React.Fragment key={page}>
                 {showEllipsis && (
-                  <span className="px-2 text-slate-400 dark:text-slate-500">...</span>
+                  <span className="px-2 text-slate-400 font-bold">...</span>
                 )}
                 <button
                   onClick={() => onPageChange(page)}
-                  className={`min-w-8 h-8 px-2 rounded-lg text-xs font-semibold transition-colors ${
+                  className={`min-w-8 h-8 px-2 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     currentPage === page
-                      ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700'
+                      ? 'bg-red-600 text-white shadow-xs'
+                      : 'border border-slate-300 bg-white text-slate-700 hover:bg-red-50 hover:border-red-300'
                   }`}
                 >
                   {page}
@@ -73,7 +73,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="p-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-red-50 hover:border-red-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
           title="Halaman Selanjutnya"
         >
           <ChevronRight className="w-4 h-4" />

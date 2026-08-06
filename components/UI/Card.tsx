@@ -12,7 +12,7 @@ export const Card: React.FC<CardProps> = ({ children, className = '', id }) => {
   return (
     <div
       id={id}
-      className={`bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow transition-shadow duration-200 p-5 sm:p-6 ${className}`}
+      className={`bg-white border border-slate-200/80 rounded-2xl shadow-xs hover:shadow-md transition-all duration-200 p-5 sm:p-6 ${className}`}
     >
       {children}
     </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card } from '../UI/Card';
 import { Member, Transaction } from '../../lib/dataService';
 import { formatRupiah, formatDateIndonesian } from '../../lib/formatters';
@@ -8,16 +8,17 @@ import {
   Wallet,
   TrendingUp,
   TrendingDown,
-  Users,
   PlusCircle,
   MinusCircle,
-  UserPlus,
   ArrowRight,
   ArrowDownRight,
   ArrowUpRight,
   BarChart3,
-  Calendar,
-  Filter,
+  Users,
+  Activity,
+  Receipt,
+  Lock,
+  LogIn,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -35,21 +36,23 @@ interface DashboardViewProps {
   members: Member[];
   transactions: Transaction[];
   onOpenTxModal: (jenis?: 'Pemasukan' | 'Pengeluaran') => void;
-  onOpenMemberModal: () => void;
+  onOpenMemberModal?: () => void;
   onSelectTab: (tab: ViewTab) => void;
+  isAdmin?: boolean;
+  onOpenLoginModal?: () => void;
 }
 
 // Custom Tooltip for Recharts
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-3 rounded-xl shadow-lg border border-slate-200 text-xs space-y-1.5">
+      <div className="bg-white p-3.5 rounded-xl shadow-lg border border-slate-200 text-xs space-y-1.5">
         <p className="font-bold text-slate-800 border-b border-slate-100 pb-1 mb-1">{label}</p>
         <div className="flex items-center justify-between gap-4 text-emerald-600 font-semibold">
           <span>Pemasukan:</span>
           <span>{formatRupiah(payload[0]?.value || 0)}</span>
         </div>
-        <div className="flex items-center justify-between gap-4 text-rose-600 font-semibold">
+        <div className="flex items-center justify-between gap-4 text-red-600 font-semibold">
           <span>Pengeluaran:</span>
           <span>{formatRupiah(payload[1]?.value || 0)}</span>
         </div>
@@ -65,6 +68,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onOpenTxModal,
   onOpenMemberModal,
   onSelectTab,
+  isAdmin = false,
+  onOpenLoginModal,
 }) => {
   const currentYear = new Date().getFullYear();
   const [chartMode, setChartMode] = useState<'year' | 'custom'>('year');
@@ -114,7 +119,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         };
       });
     } else {
-      // Custom Date Range Mode
       const start = customStart ? new Date(customStart) : new Date(`${currentYear}-01-01`);
       const end = customEnd ? new Date(customEnd) : new Date(`${currentYear}-12-31`);
       end.setHours(23, 59, 59, 999);
@@ -162,7 +166,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const chartTotalPengeluaran = useMemo(() => chartData.reduce((s, d) => s + d.Pengeluaran, 0), [chartData]);
   const chartSelisih = chartTotalPemasukan - chartTotalPengeluaran;
 
-  // Calculations
+  // Total Calculations
   const totalPemasukan = transactions
     .filter((t) => t.jenis === 'Pemasukan')
     .reduce((sum, t) => sum + (t.nominal || 0), 0);
@@ -172,8 +176,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     .reduce((sum, t) => sum + (t.nominal || 0), 0);
 
   const totalSaldo = totalPemasukan - totalPengeluaran;
-  const jumlahAnggota = members.length;
-
   const recentTransactions = transactions.slice(0, 5);
 
   const totalVolume = totalPemasukan + totalPengeluaran;
@@ -181,8 +183,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Top Banner Card - Total Saldo */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-red-600 via-red-700 to-rose-800 text-white rounded-3xl p-6 sm:p-8 shadow-lg shadow-red-700/25">
+      {/* Top Banner Hero Card - Total Saldo */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-red-600 via-red-600 to-red-700 text-white rounded-3xl p-6 sm:p-8 shadow-md border border-red-700">
         <div className="absolute -right-8 -bottom-8 opacity-10 pointer-events-none">
           <Wallet className="w-64 h-64 text-white" />
         </div>
@@ -190,104 +192,115 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-red-50 text-xs font-semibold mb-3 border border-white/20">
               <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-              Kas Remaja Merah Putih
+              Remaja Blater Kidul
             </div>
-            <p className="text-xs sm:text-sm text-red-100/90 font-medium">Total Saldo Kas Saat Ini</p>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white mt-1 drop-shadow-xs">
+            <p className="text-xs sm:text-sm text-red-100 font-medium">Total Saldo Kas Saat Ini</p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white mt-1">
               {formatRupiah(totalSaldo)}
             </h1>
           </div>
 
           {/* Quick Action Buttons inside Hero Card */}
           <div className="flex flex-wrap items-center gap-2.5">
-            <button
-              onClick={() => onOpenTxModal('Pemasukan')}
-              className="px-4 py-2.5 rounded-xl bg-white text-red-700 hover:bg-red-50 font-bold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
-            >
-              <PlusCircle className="w-4 h-4 text-emerald-600" />
-              Catat Pemasukan
-            </button>
-            <button
-              onClick={() => onOpenTxModal('Pengeluaran')}
-              className="px-4 py-2.5 rounded-xl bg-red-900/60 hover:bg-red-900/80 text-white border border-red-300/30 font-semibold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer"
-            >
-              <MinusCircle className="w-4 h-4 text-rose-200" />
-              Catat Pengeluaran
-            </button>
-            <button
-              onClick={onOpenMemberModal}
-              className="px-3.5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-medium text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer border border-white/20"
-            >
-              <UserPlus className="w-4 h-4" />
-              Anggota Baru
-            </button>
+            {isAdmin ? (
+              <>
+                <button
+                  onClick={() => onOpenTxModal('Pemasukan')}
+                  className="px-4 py-2.5 rounded-xl bg-white text-red-700 hover:bg-red-50 font-bold text-xs sm:text-sm transition-all shadow-sm flex items-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <PlusCircle className="w-4 h-4 text-emerald-600" />
+                  Catat Pemasukan
+                </button>
+                <button
+                  onClick={() => onOpenTxModal('Pengeluaran')}
+                  className="px-4 py-2.5 rounded-xl bg-red-800/80 hover:bg-red-900 text-white border border-red-400/40 font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <MinusCircle className="w-4 h-4 text-red-200" />
+                  Catat Pengeluaran
+                </button>
+              </>
+            ) : (
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={onOpenLoginModal}
+                  className="px-4 py-2.5 rounded-xl bg-white text-red-700 hover:bg-red-50 font-bold text-xs sm:text-sm transition-all shadow-sm flex items-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <LogIn className="w-4 h-4 text-red-600" />
+                  Login Admin untuk Catat
+                </button>
+                <div className="px-3.5 py-2.5 rounded-xl bg-red-900/60 text-red-100 border border-red-400/30 text-xs font-semibold flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-red-200" />
+                  Mode Lihat Saja
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* 4 Stat Metric Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Saldo Card */}
-        <Card className="flex items-center justify-between">
+        {/* Card 1: Saldo Kas */}
+        <Card className="flex items-center justify-between bg-white border border-slate-200/80 hover:border-red-200">
           <div>
-            <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Total Saldo Kas</p>
-            <p className="text-xl font-bold text-slate-900 dark:text-white mt-1">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Saldo Kas</p>
+            <p className="text-xl font-black text-slate-900 mt-1">
               {formatRupiah(totalSaldo)}
             </p>
-            <p className="text-[11px] text-red-600 dark:text-red-400 font-medium mt-1">
-              Saldo siap pakai
+            <p className="text-[11px] text-red-600 font-semibold mt-1">
+              Kas Siap Pakai
             </p>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0 border border-red-100 dark:border-red-800">
+          <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-100">
             <Wallet className="w-6 h-6" />
           </div>
         </Card>
 
-        {/* Total Pemasukan Card */}
-        <Card className="flex items-center justify-between">
+        {/* Card 2: Total Pemasukan */}
+        <Card className="flex items-center justify-between bg-white border border-slate-200/80 hover:border-emerald-200">
           <div>
-            <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Total Pemasukan</p>
-            <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Pemasukan</p>
+            <p className="text-xl font-black text-emerald-600 mt-1">
               {formatRupiah(totalPemasukan)}
             </p>
-            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
-              Akumulasi iuran & donasi
+            <p className="text-[11px] text-slate-500 font-medium mt-1">
+              Akumulasi Kas Masuk
             </p>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-emerald-100/70 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-800">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
             <TrendingUp className="w-6 h-6" />
           </div>
         </Card>
 
-        {/* Total Pengeluaran Card */}
-        <Card className="flex items-center justify-between">
+        {/* Card 3: Total Pengeluaran */}
+        <Card className="flex items-center justify-between bg-white border border-slate-200/80 hover:border-red-200">
           <div>
-            <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Total Pengeluaran</p>
-            <p className="text-xl font-bold text-rose-600 dark:text-rose-400 mt-1">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Pengeluaran</p>
+            <p className="text-xl font-black text-red-600 mt-1">
               {formatRupiah(totalPengeluaran)}
             </p>
-            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
-              Akumulasi biaya kegiatan
+            <p className="text-[11px] text-slate-500 font-medium mt-1">
+              Akumulasi Biaya Kegiatan
             </p>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 border border-rose-100 dark:border-rose-800">
+          <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-100">
             <TrendingDown className="w-6 h-6" />
           </div>
         </Card>
 
-        {/* Jumlah Anggota Card */}
-        <Card className="flex items-center justify-between">
+        {/* Card 4: Total Transaksi & Anggota */}
+        <Card className="flex items-center justify-between bg-white border border-slate-200/80 hover:border-slate-300">
           <div>
-            <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Jumlah Anggota</p>
-            <p className="text-xl font-bold text-slate-900 dark:text-white mt-1">
-              {jumlahAnggota} <span className="text-sm font-normal text-slate-500">Orang</span>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Transaksi</p>
+            <p className="text-xl font-black text-slate-900 mt-1">
+              {transactions.length} <span className="text-xs font-medium text-slate-500">Catatan</span>
             </p>
-            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
-              Terdaftar di database
+            <p className="text-[11px] text-slate-500 font-medium mt-1">
+              Tercatat dalam sistem kas
             </p>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-red-100/70 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0 border border-red-200 dark:border-red-800">
-            <Users className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-2xl bg-slate-50 text-slate-700 flex items-center justify-center shrink-0 border border-slate-200">
+            <Receipt className="w-6 h-6 text-red-600" />
           </div>
         </Card>
       </div>
@@ -296,12 +309,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       <Card className="p-5 sm:p-6 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
           <div>
-            <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-red-600" />
-              Grafik Perbandingan Pemasukan vs Pengeluaran
+              Grafik Pemasukan dan Pengeluaran Kas
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Analisis komparatif arus kas per periode bulanan
+              Analisis perbandingan arus kas bulanan
             </p>
           </div>
 
@@ -311,7 +324,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <button
                 type="button"
                 onClick={() => setChartMode('year')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   chartMode === 'year'
                     ? 'bg-red-600 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
@@ -322,7 +335,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <button
                 type="button"
                 onClick={() => setChartMode('custom')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   chartMode === 'custom'
                     ? 'bg-red-600 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
@@ -336,7 +349,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <select
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(Number(e.target.value))}
-                className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-red-500 cursor-pointer"
+                className="px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-red-500 cursor-pointer"
               >
                 {availableYears.map((y) => (
                   <option key={y} value={y}>
@@ -350,14 +363,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   type="date"
                   value={customStart}
                   onChange={(e) => setCustomStart(e.target.value)}
-                  className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-xs text-slate-700 outline-none focus:ring-2 focus:ring-red-500"
+                  className="px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white text-xs text-slate-700 outline-none focus:ring-2 focus:ring-red-500"
                 />
                 <span className="text-xs text-slate-400">-</span>
                 <input
                   type="date"
                   value={customEnd}
                   onChange={(e) => setCustomEnd(e.target.value)}
-                  className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-xs text-slate-700 outline-none focus:ring-2 focus:ring-red-500"
+                  className="px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white text-xs text-slate-700 outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
             )}
@@ -366,17 +379,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         {/* Summary Mini Stat Pills for Chart Filter */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-100 flex items-center justify-between">
-            <span className="text-xs text-slate-600 font-medium">Pemasukan Periode Ini</span>
+          <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-between">
+            <span className="text-xs text-slate-700 font-semibold">Pemasukan Periode Ini</span>
             <span className="text-sm font-bold text-emerald-700">{formatRupiah(chartTotalPemasukan)}</span>
           </div>
-          <div className="p-3 rounded-xl bg-rose-50/70 border border-rose-100 flex items-center justify-between">
-            <span className="text-xs text-slate-600 font-medium">Pengeluaran Periode Ini</span>
-            <span className="text-sm font-bold text-rose-700">{formatRupiah(chartTotalPengeluaran)}</span>
+          <div className="p-3 rounded-xl bg-red-50 border border-red-200/80 flex items-center justify-between">
+            <span className="text-xs text-slate-700 font-semibold">Pengeluaran Periode Ini</span>
+            <span className="text-sm font-bold text-red-700">{formatRupiah(chartTotalPengeluaran)}</span>
           </div>
-          <div className="p-3 rounded-xl bg-red-50/70 border border-red-100 flex items-center justify-between">
-            <span className="text-xs text-slate-600 font-medium">Selisih Kas</span>
-            <span className={`text-sm font-bold ${chartSelisih >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+            <span className="text-xs text-slate-700 font-semibold">Selisih Kas</span>
+            <span className={`text-sm font-bold ${chartSelisih >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
               {chartSelisih >= 0 ? '+' : ''}{formatRupiah(chartSelisih)}
             </span>
           </div>
@@ -391,15 +404,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 dataKey="label"
                 tickLine={false}
                 axisLine={{ stroke: '#e2e8f0' }}
-                tick={{ fill: '#64748b', fontSize: 11, fontWeight: 500 }}
+                tick={{ fill: '#64748b', fontSize: 11, fontWeight: 600 }}
               />
               <YAxis
                 tickLine={false}
                 axisLine={false}
                 tick={{ fill: '#64748b', fontSize: 10 }}
                 tickFormatter={(val) => {
-                  if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
-                  if (val >= 1000) return `${(val / 1000).toFixed(0)}k`;
+                  if (val >= 1000000) {
+                    const million = val / 1000000;
+                    return `${million % 1 === 0 ? million : million.toFixed(1)} Jt`;
+                  }
+                  if (val >= 1000) {
+                    const thousand = val / 1000;
+                    return `${thousand % 1 === 0 ? thousand : thousand.toFixed(0)} Rb`;
+                  }
                   return val;
                 }}
               />
@@ -419,7 +438,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <Bar
                 dataKey="Pengeluaran"
                 name="Pengeluaran (-)"
-                fill="#ef4444"
+                fill="#dc2626"
                 radius={[6, 6, 0, 0]}
                 maxBarSize={32}
               />
@@ -429,28 +448,28 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </Card>
 
       {/* Visual Arus Kas Progress Bar */}
-      <Card>
+      <Card className="bg-white border border-slate-200/80">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">
+            <h3 className="text-sm font-bold text-slate-900">
               Rasio Arus Kas Organisasi
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500">
               Perbandingan Pemasukan ({pemasukanPercent}%) vs Pengeluaran ({100 - pemasukanPercent}%)
             </p>
           </div>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
+          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">
             {totalSaldo >= 0 ? 'Kondisi Kas Sehat' : 'Defisit Kas'}
           </span>
         </div>
-        <div className="w-full h-3 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden flex">
+        <div className="w-full h-3.5 rounded-full bg-slate-100 overflow-hidden flex">
           <div
             className="bg-emerald-500 h-full transition-all duration-500"
             style={{ width: `${pemasukanPercent}%` }}
             title={`Pemasukan: ${pemasukanPercent}%`}
           />
           <div
-            className="bg-rose-500 h-full transition-all duration-500"
+            className="bg-red-500 h-full transition-all duration-500"
             style={{ width: `${100 - pemasukanPercent}%` }}
             title={`Pengeluaran: ${100 - pemasukanPercent}%`}
           />
@@ -458,19 +477,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </Card>
 
       {/* Recent Transactions Preview Section */}
-      <Card className="p-0 overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-red-100 dark:border-slate-700 bg-red-50/40 dark:bg-slate-800/60">
+      <Card className="p-0 overflow-hidden border border-slate-200/80">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-red-100 bg-red-600 text-white">
           <div>
-            <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">
+            <h3 className="text-base font-bold text-white">
               Transaksi Terakhir
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-red-100">
               5 catatan kas paling baru
             </p>
           </div>
           <button
             onClick={() => onSelectTab('history')}
-            className="text-xs font-semibold text-red-600 dark:text-red-400 hover:text-red-800 flex items-center gap-1 hover:underline"
+            className="text-xs font-bold px-3 py-1.5 rounded-lg bg-white text-red-700 hover:bg-red-50 transition-colors flex items-center gap-1 cursor-pointer"
           >
             Lihat Semua
             <ArrowRight className="w-3.5 h-3.5" />
@@ -478,22 +497,22 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {recentTransactions.length === 0 ? (
-          <div className="p-8 text-center text-slate-400 dark:text-slate-500 text-sm">
+          <div className="p-8 text-center text-slate-400 text-sm">
             Belum ada transaksi recorded.
           </div>
         ) : (
-          <div className="divide-y divide-emerald-50 dark:divide-slate-700/60">
+          <div className="divide-y divide-slate-100 bg-white">
             {recentTransactions.map((tx) => (
               <div
                 key={tx.id}
-                className="p-4 sm:px-6 flex items-center justify-between hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors"
+                className="p-4 sm:px-6 flex items-center justify-between hover:bg-red-50/30 transition-colors"
               >
                 <div className="flex items-center gap-3.5">
                   <div
                     className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                       tx.jenis === 'Pemasukan'
-                        ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400'
-                        : 'bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400'
+                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                        : 'bg-red-50 text-red-600 border border-red-200'
                     }`}
                   >
                     {tx.jenis === 'Pemasukan' ? (
@@ -503,10 +522,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     )}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                    <p className="text-sm font-bold text-slate-900">
                       {tx.keterangan}
                     </p>
-                    <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                    <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                       <span>{formatDateIndonesian(tx.tanggal)}</span>
                       <span>•</span>
                       <span>{tx.anggotaNama || 'Umum'}</span>
@@ -517,17 +536,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <p
                     className={`text-sm font-bold ${
                       tx.jenis === 'Pemasukan'
-                        ? 'text-emerald-600 dark:text-emerald-400'
-                        : 'text-rose-600 dark:text-rose-400'
+                        ? 'text-emerald-600'
+                        : 'text-red-600'
                     }`}
                   >
                     {tx.jenis === 'Pemasukan' ? '+' : '-'} {formatRupiah(tx.nominal)}
                   </p>
                   <span
-                    className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full mt-0.5 ${
+                    className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mt-0.5 ${
                       tx.jenis === 'Pemasukan'
-                        ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
-                        : 'bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : 'bg-red-50 text-red-700 border border-red-200'
                     }`}
                   >
                     {tx.jenis}

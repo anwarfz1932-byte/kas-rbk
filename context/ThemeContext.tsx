@@ -13,26 +13,25 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [isDarkMode] = useState<boolean>(false);
 
   useEffect(() => {
     document.documentElement.classList.remove('dark');
     if (typeof window !== 'undefined') {
       localStorage.setItem('kas_remaja_theme', 'light');
     }
-  }, [isDarkMode]);
+  }, []);
 
   const toggleDarkMode = () => {
-    // Keep light theme active per user request
-    setIsDarkMode(false);
-    document.documentElement.classList.remove('dark');
+    // Light mode locked
   };
 
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
+    <ThemeContext.Provider value={{ isDarkMode: false, toggleDarkMode }}>
       {children}
     </ThemeContext.Provider>
   );
 };
 
 export const useTheme = () => useContext(ThemeContext);
+

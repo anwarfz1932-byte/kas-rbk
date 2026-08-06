@@ -17,6 +17,8 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   Calendar,
+  Lock,
+  LogIn,
 } from 'lucide-react';
 
 interface HistoryViewProps {
@@ -25,6 +27,8 @@ interface HistoryViewProps {
   onOpenAddModal: (jenis?: 'Pemasukan' | 'Pengeluaran') => void;
   onOpenEditModal: (tx: Transaction) => void;
   onOpenDeleteConfirm: (tx: Transaction) => void;
+  isAdmin?: boolean;
+  onOpenLoginModal?: () => void;
 }
 
 export const HistoryView: React.FC<HistoryViewProps> = ({
@@ -33,6 +37,8 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
   onOpenAddModal,
   onOpenEditModal,
   onOpenDeleteConfirm,
+  isAdmin = false,
+  onOpenLoginModal,
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filterJenis, setFilterJenis] = useState<'Semua' | 'Pemasukan' | 'Pengeluaran'>('Semua');
@@ -102,35 +108,48 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Top Controls Bar: Search + Date Filters + Export Buttons */}
-      <Card className="p-4 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-red-100 dark:border-slate-700">
-          <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+      <Card className="p-4 sm:p-5 space-y-4 border border-slate-200/80">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <Filter className="w-4 h-4 text-red-600" />
-            Filter & Pencarian Riwayat
+            Filter & Pencarian Riwayat Kas
           </h3>
 
           <div className="flex items-center gap-2 flex-wrap">
+            {/* Secondary Buttons: White with Red border */}
             <button
               onClick={handleExportExcel}
-              className="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-white text-red-600 border border-red-600 hover:bg-red-50 font-bold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
             >
               <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
               Export Excel
             </button>
             <button
               onClick={handleExportPDF}
-              className="px-3.5 py-2 rounded-xl bg-red-50 dark:bg-red-950/70 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/60 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-white text-red-600 border border-red-600 hover:bg-red-50 font-bold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
             >
               <FileText className="w-4 h-4 text-red-600" />
               Cetak PDF
             </button>
-            <button
-              onClick={() => onOpenAddModal('Pemasukan')}
-              className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
-            >
-              <PlusCircle className="w-4 h-4" />
-              Tambah Transaksi
-            </button>
+            {/* Primary Button or Login Button */}
+            {isAdmin ? (
+              <button
+                onClick={() => onOpenAddModal('Pemasukan')}
+                className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition-all shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95"
+              >
+                <PlusCircle className="w-4 h-4" />
+                Catat Transaksi
+              </button>
+            ) : (
+              <button
+                onClick={onOpenLoginModal}
+                className="px-3.5 py-2 rounded-xl bg-white text-red-600 border border-red-600 hover:bg-red-50 font-bold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                title="Masuk sebagai admin untuk mencatat transaksi"
+              >
+                <LogIn className="w-4 h-4 text-red-600" />
+                Login Admin untuk Catat
+              </button>
+            )}
           </div>
         </div>
 
@@ -147,7 +166,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-red-500 outline-none"
+              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none transition-colors"
             />
           </div>
 
@@ -159,7 +178,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                 setFilterJenis(e.target.value as any);
                 setCurrentPage(1);
               }}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-red-500 outline-none font-medium"
+              className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none font-medium cursor-pointer"
             >
               <option value="Semua">Semua Jenis Transaksi</option>
               <option value="Pemasukan">Khusus Pemasukan (+)</option>
@@ -177,7 +196,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                 setStartDate(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-red-500 outline-none"
+              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none"
               title="Tanggal Mulai"
             />
           </div>
@@ -192,7 +211,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                 setEndDate(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-red-500 outline-none"
+              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none"
               title="Tanggal Selesai"
             />
           </div>
@@ -202,7 +221,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
         {(searchTerm || filterJenis !== 'Semua' || startDate || endDate) && (
           <div className="flex items-center justify-between text-xs pt-1">
             <span className="text-slate-500">
-              Ditemukan <strong className="text-slate-800 dark:text-slate-200">{filteredTransactions.length}</strong> data sesuai filter
+              Ditemukan <strong className="text-slate-900">{filteredTransactions.length}</strong> data transaksi
             </span>
             <button
               onClick={() => {
@@ -212,7 +231,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                 setEndDate('');
                 setCurrentPage(1);
               }}
-              className="text-red-600 dark:text-red-400 hover:underline font-semibold"
+              className="text-red-600 hover:underline font-bold cursor-pointer"
             >
               Reset Semua Filter
             </button>
@@ -221,25 +240,28 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
       </Card>
 
       {/* Main Table Card */}
-      <Card className="p-0 overflow-hidden">
+      <Card className="p-0 overflow-hidden border border-slate-200/80">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-sm">
+            {/* Header Merah dengan Teks Putih */}
             <thead>
-              <tr className="border-b border-red-100 dark:border-slate-700 bg-red-50/50 dark:bg-slate-800/80 text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
-                <th className="py-3.5 px-4 text-center w-12">No</th>
-                <th className="py-3.5 px-4">Tanggal</th>
-                <th className="py-3.5 px-4">Jenis</th>
-                <th className="py-3.5 px-4">Keterangan</th>
-                <th className="py-3.5 px-4">Anggota</th>
-                <th className="py-3.5 px-4 text-right">Nominal</th>
-                <th className="py-3.5 px-4 text-center w-24">Aksi</th>
+              <tr className="bg-red-600 text-white text-xs font-bold uppercase tracking-wider">
+                <th className="py-3.5 px-4 text-center w-12 border-b border-red-700">No</th>
+                <th className="py-3.5 px-4 border-b border-red-700">Tanggal</th>
+                <th className="py-3.5 px-4 border-b border-red-700">Jenis</th>
+                <th className="py-3.5 px-4 border-b border-red-700">Keterangan</th>
+                <th className="py-3.5 px-4 border-b border-red-700">Anggota</th>
+                <th className="py-3.5 px-4 text-right border-b border-red-700">Nominal</th>
+                <th className="py-3.5 px-4 text-center w-28 border-b border-red-700">
+                  {isAdmin ? 'Aksi' : 'Akses'}
+                </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-red-50 dark:divide-slate-700/60">
+            <tbody className="divide-y divide-slate-100 bg-white">
               {paginatedTransactions.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-slate-400 dark:text-slate-500">
-                    Tidak ada transaksi yang cocok.
+                  <td colSpan={7} className="py-12 text-center text-slate-400 font-medium">
+                    Tidak ada data transaksi yang cocok.
                   </td>
                 </tr>
               ) : (
@@ -248,62 +270,74 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                   return (
                     <tr
                       key={tx.id}
-                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
+                      className="hover:bg-red-50/40 transition-colors"
                     >
-                      <td className="py-3.5 px-4 text-center font-medium text-slate-500">
+                      <td className="py-3.5 px-4 text-center font-semibold text-slate-500">
                         {globalIndex}
                       </td>
-                      <td className="py-3.5 px-4 font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                      <td className="py-3.5 px-4 font-semibold text-slate-700 whitespace-nowrap">
                         {formatDateIndonesian(tx.tanggal)}
                       </td>
                       <td className="py-3.5 px-4">
                         <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${
                             tx.jenis === 'Pemasukan'
-                              ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
-                              : 'bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-red-50 text-red-700 border border-red-200'
                           }`}
                         >
                           {tx.jenis === 'Pemasukan' ? (
                             <ArrowDownRight className="w-3.5 h-3.5 text-emerald-600" />
                           ) : (
-                            <ArrowUpRight className="w-3.5 h-3.5 text-rose-600" />
+                            <ArrowUpRight className="w-3.5 h-3.5 text-red-600" />
                           )}
                           {tx.jenis}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-white max-w-xs">
+                      <td className="py-3.5 px-4 font-bold text-slate-900 max-w-xs">
                         {tx.keterangan}
                       </td>
-                      <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">
+                      <td className="py-3.5 px-4 text-slate-600 font-medium">
                         {tx.anggotaNama || '-'}
                       </td>
                       <td
                         className={`py-3.5 px-4 text-right font-bold whitespace-nowrap ${
                           tx.jenis === 'Pemasukan'
-                            ? 'text-emerald-600 dark:text-emerald-400'
-                            : 'text-rose-600 dark:text-rose-400'
+                            ? 'text-emerald-600'
+                            : 'text-red-600'
                         }`}
                       >
                         {tx.jenis === 'Pemasukan' ? '+' : '-'} {formatRupiah(tx.nominal)}
                       </td>
                       <td className="py-3.5 px-4">
-                        <div className="flex items-center justify-center gap-1">
-                          <button
-                            onClick={() => onOpenEditModal(tx)}
-                            className="p-1.5 rounded-lg text-slate-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-slate-700 transition-colors"
-                            title="Edit Transaksi"
-                          >
-                            <Pencil className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => onOpenDeleteConfirm(tx)}
-                            className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-700 transition-colors"
-                            title="Hapus Transaksi"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
+                        {isAdmin ? (
+                          <div className="flex items-center justify-center gap-1">
+                            <button
+                              onClick={() => onOpenEditModal(tx)}
+                              className="p-1.5 rounded-lg text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer"
+                              title="Edit Transaksi"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => onOpenDeleteConfirm(tx)}
+                              className="p-1.5 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                              title="Hapus Transaksi"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-center">
+                            <span
+                              className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded-md border border-slate-200"
+                              title="Hanya Admin yang dapat mengedit/menghapus transaksi"
+                            >
+                              <Lock className="w-3 h-3 text-slate-400" />
+                              Lihat Saja
+                            </span>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   );
@@ -314,7 +348,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
         </div>
 
         {/* Pagination */}
-        <div className="p-4 bg-white dark:bg-slate-800">
+        <div className="p-4 bg-white border-t border-slate-100">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
