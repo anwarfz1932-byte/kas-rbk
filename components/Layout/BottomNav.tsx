@@ -37,7 +37,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentTab, onSelectTab })
               onClick={() => onSelectTab(item.id)}
               className={`flex flex-col items-center justify-center py-1.5 px-2.5 sm:px-4 rounded-xl transition-all cursor-pointer ${
                 isActive
-                  ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/80 dark:bg-emerald-950/50 font-bold scale-105'
+                  ? 'text-red-600 dark:text-red-400 bg-red-50/90 dark:bg-red-950/60 font-bold scale-105 border border-red-100 dark:border-red-900/40'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100/60 dark:hover:bg-slate-800/60'
               }`}
               title={item.label}
@@ -45,7 +45,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentTab, onSelectTab })
               <div className="relative">
                 <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5px]' : 'stroke-[1.75px]'}`} />
                 {isActive && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-pulse" />
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-red-600 dark:bg-red-400 animate-pulse" />
                 )}
               </div>
               <span className={`text-[10px] sm:text-xs mt-1 ${isActive ? 'font-bold' : 'font-medium'}`}>

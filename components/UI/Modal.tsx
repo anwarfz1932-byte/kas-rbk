@@ -34,12 +34,12 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div
-        className="bg-white dark:bg-slate-800 border border-emerald-100 dark:border-slate-700 w-full max-w-lg rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
+        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 w-full max-w-lg rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-emerald-100 dark:border-slate-700 bg-emerald-50/50 dark:bg-slate-800/80">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-red-50/40 dark:bg-slate-800/80">
           <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-red-600"></span>
             {title}
           </h3>
           <button

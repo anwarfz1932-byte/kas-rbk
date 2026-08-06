@@ -74,7 +74,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-emerald-100 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 outline-none shadow-xs"
+            className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-red-100 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none shadow-xs"
           />
           {searchTerm && (
             <button
@@ -89,7 +89,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
         {/* Add Member Button */}
         <button
           onClick={onOpenAddModal}
-          className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm transition-all shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 cursor-pointer shrink-0"
+          className="px-5 py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-all shadow-md shadow-red-600/20 flex items-center justify-center gap-2 cursor-pointer shrink-0"
         >
           <UserPlus className="w-4 h-4" />
           Tambah Anggota
@@ -101,7 +101,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-sm">
             <thead>
-              <tr className="border-b border-emerald-100 dark:border-slate-700 bg-emerald-50/50 dark:bg-slate-800/80 text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+              <tr className="border-b border-red-100 dark:border-slate-700 bg-red-50/50 dark:bg-slate-800/80 text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                 <th className="py-3.5 px-4 text-center w-12">No</th>
                 <th className="py-3.5 px-4">Nama Anggota</th>
                 <th className="py-3.5 px-4">Jabatan / Peran</th>
@@ -110,7 +110,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
                 <th className="py-3.5 px-4 text-center w-32">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-emerald-50 dark:divide-slate-700/60">
+            <tbody className="divide-y divide-red-50 dark:divide-slate-700/60">
               {paginatedMembers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-12 text-center text-slate-400 dark:text-slate-500">
@@ -135,7 +135,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
                         {globalIndex}
                       </td>
                       <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-white flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-bold flex items-center justify-center text-xs shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-400 font-bold flex items-center justify-center text-xs shrink-0">
                           {member.nama.charAt(0).toUpperCase()}
                         </div>
                         <div>
@@ -146,8 +146,8 @@ export const MembersView: React.FC<MembersViewProps> = ({
                         </div>
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-slate-700">
-                          <Shield className="w-3 h-3 text-emerald-600" />
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-red-50 dark:bg-slate-800 text-red-700 dark:text-red-300 border border-red-100 dark:border-slate-700">
+                          <Shield className="w-3 h-3 text-red-600" />
                           {member.jabatan}
                         </span>
                       </td>
@@ -157,9 +157,9 @@ export const MembersView: React.FC<MembersViewProps> = ({
                             href={`https://wa.me/${member.noHp.replace(/[^0-9]/g, '')}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400"
+                            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400"
                           >
-                            <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                            <Phone className="w-3.5 h-3.5 text-red-600" />
                             {member.noHp}
                           </a>
                         ) : (
@@ -220,17 +220,17 @@ export const MembersView: React.FC<MembersViewProps> = ({
       {/* Member Transaction Details Modal */}
       {selectedMemberForHistory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-800 border border-emerald-100 dark:border-slate-700 w-full max-w-xl rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[85vh]">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-emerald-100 dark:border-slate-700 bg-emerald-50/50 dark:bg-slate-800/80">
+          <div className="bg-white dark:bg-slate-800 border border-red-100 dark:border-slate-700 w-full max-w-xl rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-red-100 dark:border-slate-700 bg-red-50/50 dark:bg-slate-800/80">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-sm">
+                <div className="w-9 h-9 rounded-full bg-red-600 text-white font-bold flex items-center justify-center text-sm">
                   {selectedMemberForHistory.nama.charAt(0)}
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-slate-900 dark:text-white">
                     {selectedMemberForHistory.nama}
                   </h3>
-                  <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                  <p className="text-xs text-red-600 dark:text-red-400 font-medium">
                     {selectedMemberForHistory.jabatan}
                   </p>
                 </div>
@@ -253,7 +253,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
 
                 return (
                   <>
-                    <div className="p-4 rounded-xl bg-emerald-50 dark:bg-slate-800/80 border border-emerald-100 dark:border-slate-700 flex items-center justify-between">
+                    <div className="p-4 rounded-xl bg-red-50 dark:bg-slate-800/80 border border-red-100 dark:border-slate-700 flex items-center justify-between">
                       <div>
                         <p className="text-xs text-slate-500 dark:text-slate-400">Total Setoran / Iuran</p>
                         <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">

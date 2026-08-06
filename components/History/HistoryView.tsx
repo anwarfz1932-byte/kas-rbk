@@ -103,30 +103,30 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
     <div className="space-y-6">
       {/* Top Controls Bar: Search + Date Filters + Export Buttons */}
       <Card className="p-4 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-emerald-100 dark:border-slate-700">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-red-100 dark:border-slate-700">
           <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <Filter className="w-4 h-4 text-emerald-600" />
+            <Filter className="w-4 h-4 text-red-600" />
             Filter & Pencarian Riwayat
           </h3>
 
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={handleExportExcel}
-              className="px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
             >
               <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
               Export Excel
             </button>
             <button
               onClick={handleExportPDF}
-              className="px-3.5 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-red-50 dark:bg-red-950/70 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/60 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
             >
-              <FileText className="w-4 h-4 text-rose-600" />
+              <FileText className="w-4 h-4 text-red-600" />
               Cetak PDF
             </button>
             <button
               onClick={() => onOpenAddModal('Pemasukan')}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               Tambah Transaksi
@@ -147,7 +147,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
+              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-red-500 outline-none"
             />
           </div>
 
@@ -159,7 +159,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                 setFilterJenis(e.target.value as any);
                 setCurrentPage(1);
               }}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-emerald-500 outline-none font-medium"
+              className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-red-500 outline-none font-medium"
             >
               <option value="Semua">Semua Jenis Transaksi</option>
               <option value="Pemasukan">Khusus Pemasukan (+)</option>
@@ -177,7 +177,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                 setStartDate(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
+              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-red-500 outline-none"
               title="Tanggal Mulai"
             />
           </div>
@@ -192,7 +192,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                 setEndDate(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
+              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-red-500 outline-none"
               title="Tanggal Selesai"
             />
           </div>
@@ -212,7 +212,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                 setEndDate('');
                 setCurrentPage(1);
               }}
-              className="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold"
+              className="text-red-600 dark:text-red-400 hover:underline font-semibold"
             >
               Reset Semua Filter
             </button>
@@ -225,7 +225,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-sm">
             <thead>
-              <tr className="border-b border-emerald-100 dark:border-slate-700 bg-emerald-50/50 dark:bg-slate-800/80 text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+              <tr className="border-b border-red-100 dark:border-slate-700 bg-red-50/50 dark:bg-slate-800/80 text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                 <th className="py-3.5 px-4 text-center w-12">No</th>
                 <th className="py-3.5 px-4">Tanggal</th>
                 <th className="py-3.5 px-4">Jenis</th>
@@ -235,7 +235,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                 <th className="py-3.5 px-4 text-center w-24">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-emerald-50 dark:divide-slate-700/60">
+            <tbody className="divide-y divide-red-50 dark:divide-slate-700/60">
               {paginatedTransactions.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="py-12 text-center text-slate-400 dark:text-slate-500">

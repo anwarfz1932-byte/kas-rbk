@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Sun, Moon, UserCheck, KeyRound } from 'lucide-react';
+import { Sun, UserCheck, KeyRound } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { ViewTab } from './Sidebar';
@@ -61,30 +61,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right side: Dark Mode + Admin Profile + Change Password + Logout */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Dark Mode / Light Mode Toggle Button */}
-          <button
-            onClick={toggleDarkMode}
-            className="p-2.5 sm:px-3 sm:py-2 rounded-xl border border-emerald-100 dark:border-slate-700 bg-emerald-50/60 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 hover:bg-emerald-100 dark:hover:bg-slate-700 font-medium text-xs flex items-center gap-2 transition-colors cursor-pointer"
-            title={isDarkMode ? 'Beralih ke Mode Terang' : 'Beralih ke Mode Gelap'}
-            aria-label="Ganti Tema"
+          {/* Theme Indicator (Terang Putih) */}
+          <div
+            className="p-2 sm:px-3 sm:py-2 rounded-xl border border-red-100 bg-red-50/60 text-slate-700 font-medium text-xs flex items-center gap-2"
+            title="Tema Terang Aktif"
           >
-            {isDarkMode ? (
-              <>
-                <Sun className="w-4 h-4 text-amber-400 shrink-0" />
-                <span className="hidden sm:inline font-semibold">Mode Terang</span>
-              </>
-            ) : (
-              <>
-                <Moon className="w-4 h-4 text-slate-600 dark:text-slate-300 shrink-0" />
-                <span className="hidden sm:inline font-semibold">Mode Gelap</span>
-              </>
-            )}
-          </button>
+            <Sun className="w-4 h-4 text-amber-500 shrink-0" />
+            <span className="hidden sm:inline font-semibold text-slate-700">Tema Terang</span>
+          </div>
 
           {/* User Profile Tag */}
           {user && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-slate-800 border border-emerald-200 dark:border-slate-700 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
-              <UserCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-red-50 dark:bg-slate-800 border border-red-200 dark:border-slate-700 text-xs font-semibold text-red-800 dark:text-red-300">
+              <UserCheck className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
               <span className="max-w-[120px] sm:max-w-[180px] truncate">
                 {user.name || user.email}
               </span>
@@ -100,10 +89,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           {onOpenChangePassword && (
             <button
               onClick={onOpenChangePassword}
-              className="p-2.5 sm:px-3 sm:py-2 rounded-xl border border-emerald-200 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 font-medium text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="p-2.5 sm:px-3 sm:py-2 rounded-xl border border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/60 font-medium text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
               title="Ganti Password Admin"
             >
-              <KeyRound className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <KeyRound className="w-4 h-4 text-red-600 dark:text-red-400" />
               <span className="hidden md:inline">Ganti Password</span>
             </button>
           )}

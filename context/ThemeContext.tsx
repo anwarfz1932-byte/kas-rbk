@@ -13,33 +13,19 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('kas_remaja_theme') === 'dark';
-    }
-    return false;
-  });
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    document.documentElement.classList.remove('dark');
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('kas_remaja_theme', 'light');
     }
   }, [isDarkMode]);
 
   const toggleDarkMode = () => {
-    setIsDarkMode((prev) => {
-      const next = !prev;
-      if (next) {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('kas_remaja_theme', 'dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('kas_remaja_theme', 'light');
-      }
-      return next;
-    });
+    // Keep light theme active per user request
+    setIsDarkMode(false);
+    document.documentElement.classList.remove('dark');
   };
 
   return (

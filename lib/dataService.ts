@@ -82,6 +82,16 @@ const initialTransactions: Omit<Transaction, 'id'>[] = [
   },
 ];
 
+function cleanPayload<T extends Record<string, any>>(obj: T): T {
+  const cleaned: Record<string, any> = {};
+  for (const key of Object.keys(obj)) {
+    if (obj[key] !== undefined) {
+      cleaned[key] = obj[key];
+    }
+  }
+  return cleaned as T;
+}
+
 // MEMBERS CRUD
 export function subscribeMembers(callback: (members: Member[]) => void) {
   try {
@@ -132,14 +142,15 @@ export function subscribeMembers(callback: (members: Member[]) => void) {
 }
 
 export async function addMemberData(member: Omit<Member, 'id'>) {
+  const payload = cleanPayload(member);
   try {
-    const docRef = await addDoc(collection(db, 'members'), member);
+    const docRef = await addDoc(collection(db, 'members'), payload);
     return docRef.id;
   } catch (err) {
     console.warn('Firestore write error, saving to local storage fallback:', err);
     const local = JSON.parse(localStorage.getItem('kas_remaja_members') || '[]');
     const newId = `m-${Date.now()}`;
-    const newMember = { ...member, id: newId };
+    const newMember = { ...payload, id: newId };
     local.unshift(newMember);
     localStorage.setItem('kas_remaja_members', JSON.stringify(local));
     return newId;
@@ -147,12 +158,13 @@ export async function addMemberData(member: Omit<Member, 'id'>) {
 }
 
 export async function updateMemberData(id: string, member: Partial<Member>) {
+  const payload = cleanPayload(member);
   try {
     const docRef = doc(db, 'members', id);
-    await updateDoc(docRef, member);
+    await updateDoc(docRef, payload);
   } catch (err) {
     const local: Member[] = JSON.parse(localStorage.getItem('kas_remaja_members') || '[]');
-    const updated = local.map((m) => (m.id === id ? { ...m, ...member } : m));
+    const updated = local.map((m) => (m.id === id ? { ...m, ...payload } : m));
     localStorage.setItem('kas_remaja_members', JSON.stringify(updated));
   }
 }
@@ -216,14 +228,15 @@ export function subscribeTransactions(callback: (transactions: Transaction[]) =>
 }
 
 export async function addTransactionData(transaction: Omit<Transaction, 'id'>) {
+  const payload = cleanPayload(transaction);
   try {
-    const docRef = await addDoc(collection(db, 'transactions'), transaction);
+    const docRef = await addDoc(collection(db, 'transactions'), payload);
     return docRef.id;
   } catch (err) {
     console.warn('Firestore transaction write error, saving locally:', err);
     const local = JSON.parse(localStorage.getItem('kas_remaja_transactions') || '[]');
     const newId = `t-${Date.now()}`;
-    const newTx = { ...transaction, id: newId };
+    const newTx = { ...payload, id: newId };
     local.unshift(newTx);
     localStorage.setItem('kas_remaja_transactions', JSON.stringify(local));
     return newId;
@@ -231,12 +244,13 @@ export async function addTransactionData(transaction: Omit<Transaction, 'id'>) {
 }
 
 export async function updateTransactionData(id: string, transaction: Partial<Transaction>) {
+  const payload = cleanPayload(transaction);
   try {
     const docRef = doc(db, 'transactions', id);
-    await updateDoc(docRef, transaction);
+    await updateDoc(docRef, payload);
   } catch (err) {
     const local: Transaction[] = JSON.parse(localStorage.getItem('kas_remaja_transactions') || '[]');
-    const updated = local.map((t) => (t.id === id ? { ...t, ...transaction } : t));
+    const updated = local.map((t) => (t.id === id ? { ...t, ...payload } : t));
     localStorage.setItem('kas_remaja_transactions', JSON.stringify(updated));
   }
 }

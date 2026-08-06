@@ -97,7 +97,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-emerald-600" />
+              <Calendar className="w-5 h-5 text-red-600" />
               Pilih Periode Laporan Keuangan
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -118,8 +118,8 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
                 onClick={() => setPeriodPreset(p.id as any)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
                   periodPreset === p.id
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700'
+                    ? 'bg-red-600 text-white shadow-xs'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-slate-700'
                 }`}
               >
                 {p.label}
@@ -130,14 +130,14 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
 
         {/* Custom date range inputs */}
         {periodPreset === 'custom' && (
-          <div className="mt-4 pt-4 border-t border-emerald-100 dark:border-slate-700 flex flex-wrap items-center gap-3">
+          <div className="mt-4 pt-4 border-t border-red-100 dark:border-slate-700 flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2 text-xs">
               <span className="text-slate-600 dark:text-slate-300 font-medium">Mulai:</span>
               <input
                 type="date"
                 value={customStart}
                 onChange={(e) => setCustomStart(e.target.value)}
-                className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs focus:ring-2 focus:ring-red-500 outline-none"
               />
             </div>
             <div className="flex items-center gap-2 text-xs">
@@ -146,7 +146,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
                 type="date"
                 value={customEnd}
                 onChange={(e) => setCustomEnd(e.target.value)}
-                className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs focus:ring-2 focus:ring-red-500 outline-none"
               />
             </div>
           </div>
@@ -217,10 +217,10 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
       </div>
 
       {/* Export Action Card */}
-      <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 border-emerald-200 dark:border-slate-700 bg-gradient-to-r from-emerald-50/50 to-teal-50/30 dark:from-slate-800 dark:to-slate-800">
+      <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 border-red-200 dark:border-slate-700 bg-gradient-to-r from-red-50/60 to-rose-50/40 dark:from-slate-800 dark:to-slate-800">
         <div>
           <h4 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Printer className="w-5 h-5 text-emerald-600" />
+            <Printer className="w-5 h-5 text-red-600" />
             Cetak & Export Laporan Official
           </h4>
           <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
@@ -230,14 +230,14 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={handleExportExcel}
-            className="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-slate-600 font-semibold text-xs sm:text-sm transition-all shadow-xs flex items-center gap-2 cursor-pointer"
+            className="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 font-semibold text-xs sm:text-sm transition-all shadow-xs flex items-center gap-2 cursor-pointer"
           >
             <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
             Export Excel (.xlsx)
           </button>
           <button
             onClick={handlePrintPDF}
-            className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm transition-all shadow-md shadow-emerald-600/20 flex items-center gap-2 cursor-pointer"
+            className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs sm:text-sm transition-all shadow-md shadow-red-600/20 flex items-center gap-2 cursor-pointer"
           >
             <Download className="w-4 h-4" />
             Cetak PDF (.pdf)
@@ -247,7 +247,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
 
       {/* Report Preview Table */}
       <Card className="p-0 overflow-hidden">
-        <div className="px-6 py-4 border-b border-emerald-100 dark:border-slate-700 bg-emerald-50/40 dark:bg-slate-800/60 flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-red-100 dark:border-slate-700 bg-red-50/40 dark:bg-slate-800/60 flex items-center justify-between">
           <div>
             <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">
               Preview Tabel Laporan ({getPeriodeLabel()})
@@ -261,7 +261,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-sm">
             <thead>
-              <tr className="border-b border-emerald-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/90 text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+              <tr className="border-b border-red-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/90 text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                 <th className="py-3.5 px-4 text-center w-12">No</th>
                 <th className="py-3.5 px-4">Tanggal</th>
                 <th className="py-3.5 px-4">Jenis</th>

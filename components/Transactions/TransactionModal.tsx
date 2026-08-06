@@ -65,14 +65,17 @@ const TransactionForm: React.FC<{
 
     try {
       setLoading(true);
-      await onSubmit({
+      const txPayload: Omit<Transaction, 'id' | 'createdAt'> = {
         tanggal,
         jenis,
         nominal: parsedNominal,
         keterangan: keterangan.trim(),
-        anggota: anggotaId || undefined,
         anggotaNama: selectedAnggotaNama,
-      });
+      };
+      if (anggotaId) {
+        txPayload.anggota = anggotaId;
+      }
+      await onSubmit(txPayload);
       setLoading(false);
       onClose();
     } catch (err: any) {
@@ -100,8 +103,8 @@ const TransactionForm: React.FC<{
             onClick={() => setJenis('Pemasukan')}
             className={`flex items-center justify-center gap-2 p-3 rounded-xl font-semibold text-sm border transition-all ${
               jenis === 'Pemasukan'
-                ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
-                : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700'
+                ? 'bg-red-600 text-white border-red-600 shadow-sm'
+                : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-slate-700'
             }`}
           >
             <ArrowDownRight className="w-4 h-4" />
@@ -134,7 +137,7 @@ const TransactionForm: React.FC<{
             value={tanggal}
             onChange={(e) => setTanggal(e.target.value)}
             required
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none"
           />
         </div>
       </div>
@@ -153,11 +156,11 @@ const TransactionForm: React.FC<{
             value={nominal}
             onChange={(e) => setNominal(e.target.value)}
             required
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none font-medium"
           />
         </div>
         {nominal && !isNaN(parseFloat(nominal)) && parseFloat(nominal) > 0 && (
-          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-semibold">
+          <p className="text-xs text-red-600 dark:text-red-400 mt-1 font-semibold">
             Format: {formatRupiah(parseFloat(nominal))}
           </p>
         )}
@@ -173,7 +176,7 @@ const TransactionForm: React.FC<{
           <select
             value={anggotaId}
             onChange={(e) => setAnggotaId(e.target.value)}
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none"
           >
             <option value="">-- Umum / Non-Anggota --</option>
             {members.map((m) => (
@@ -198,7 +201,7 @@ const TransactionForm: React.FC<{
             value={keterangan}
             onChange={(e) => setKeterangan(e.target.value)}
             required
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none"
           />
         </div>
       </div>
@@ -217,7 +220,7 @@ const TransactionForm: React.FC<{
           disabled={loading}
           className={`flex-1 py-2.5 rounded-xl font-semibold text-sm text-white transition-colors shadow-sm ${
             jenis === 'Pemasukan'
-              ? 'bg-emerald-600 hover:bg-emerald-700'
+              ? 'bg-red-600 hover:bg-red-700'
               : 'bg-rose-600 hover:bg-rose-700'
           }`}
         >

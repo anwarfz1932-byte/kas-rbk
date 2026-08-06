@@ -68,7 +68,7 @@ const MemberForm: React.FC<{
             value={nama}
             onChange={(e) => setNama(e.target.value)}
             required
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none font-medium"
           />
         </div>
       </div>
@@ -83,7 +83,7 @@ const MemberForm: React.FC<{
           <select
             value={jabatan}
             onChange={(e) => setJabatan(e.target.value)}
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none font-medium"
           >
             <option value="Ketua Remaja">Ketua Remaja</option>
             <option value="Wakil Ketua">Wakil Ketua</option>
@@ -107,7 +107,7 @@ const MemberForm: React.FC<{
             placeholder="Contoh: 081234567890"
             value={noHp}
             onChange={(e) => setNoHp(e.target.value)}
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-red-500 outline-none"
           />
         </div>
       </div>
@@ -124,7 +124,7 @@ const MemberForm: React.FC<{
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm transition-colors shadow-sm"
+          className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-colors shadow-sm"
         >
           {loading ? 'Menyimpan...' : 'Simpan Data Anggota'}
         </button>
