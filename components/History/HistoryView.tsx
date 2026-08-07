@@ -27,7 +27,6 @@ interface HistoryViewProps {
   onOpenAddModal: (jenis?: 'Pemasukan' | 'Pengeluaran') => void;
   onOpenEditModal: (tx: Transaction) => void;
   onOpenDeleteConfirm: (tx: Transaction) => void;
-  onDeleteAllConfirm?: () => void;
   isAdmin?: boolean;
   onOpenLoginModal?: () => void;
 }
@@ -38,7 +37,6 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
   onOpenAddModal,
   onOpenEditModal,
   onOpenDeleteConfirm,
-  onDeleteAllConfirm,
   isAdmin = false,
   onOpenLoginModal,
 }) => {
@@ -133,17 +131,6 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
               <FileText className="w-4 h-4 text-red-600" />
               Cetak PDF
             </button>
-
-            {isAdmin && transactions.length > 0 && onDeleteAllConfirm && (
-              <button
-                onClick={onDeleteAllConfirm}
-                className="px-3.5 py-2 rounded-xl bg-red-50 text-red-700 border border-red-300 hover:bg-red-100 font-bold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
-                title="Hapus seluruh riwayat transaksi"
-              >
-                <Trash2 className="w-4 h-4 text-red-600" />
-                Hapus Semua
-              </button>
-            )}
 
             {/* Primary Button or Login Button */}
             {isAdmin ? (

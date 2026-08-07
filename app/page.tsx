@@ -55,7 +55,6 @@ export default function MainPage() {
   // Delete confirm modals state
   const [deleteTxTarget, setDeleteTxTarget] = useState<Transaction | null>(null);
   const [deleteMemberTarget, setDeleteMemberTarget] = useState<Member | null>(null);
-  const [isConfirmDeleteAllTxOpen, setIsConfirmDeleteAllTxOpen] = useState<boolean>(false);
   const [actionLoading, setActionLoading] = useState<boolean>(false);
 
   // Toast helper
@@ -158,25 +157,6 @@ export default function MainPage() {
       setDeleteTxTarget(null);
     } catch (err: any) {
       addToast('error', 'Gagal menghapus transaksi: ' + err.message);
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const handleConfirmDeleteAllTx = async () => {
-    if (!isAdmin) {
-      addToast('error', 'Hanya admin yang dapat menghapus semua transaksi.');
-      setIsLoginModalOpen(true);
-      setIsConfirmDeleteAllTxOpen(false);
-      return;
-    }
-    try {
-      setActionLoading(true);
-      await deleteAllTransactionsData();
-      addToast('success', 'Semua riwayat transaksi kas berhasil dihapus.');
-      setIsConfirmDeleteAllTxOpen(false);
-    } catch (err: any) {
-      addToast('error', 'Gagal menghapus seluruh transaksi: ' + err.message);
     } finally {
       setActionLoading(false);
     }
@@ -292,7 +272,6 @@ export default function MainPage() {
                   onOpenAddModal={handleOpenAddTx}
                   onOpenEditModal={handleOpenEditTx}
                   onOpenDeleteConfirm={setDeleteTxTarget}
-                  onDeleteAllConfirm={() => setIsConfirmDeleteAllTxOpen(true)}
                   isAdmin={isAdmin}
                   onOpenLoginModal={() => setIsLoginModalOpen(true)}
                 />
@@ -305,7 +284,6 @@ export default function MainPage() {
                   onOpenAddModal={handleOpenAddTx}
                   onOpenEditModal={handleOpenEditTx}
                   onOpenDeleteConfirm={setDeleteTxTarget}
-                  onDeleteAllConfirm={() => setIsConfirmDeleteAllTxOpen(true)}
                   isAdmin={isAdmin}
                   onOpenLoginModal={() => setIsLoginModalOpen(true)}
                 />
@@ -359,16 +337,6 @@ export default function MainPage() {
         onConfirm={handleConfirmDeleteMember}
         title="Hapus Data Anggota"
         message={`Apakah Anda yakin ingin menghapus anggota "${deleteMemberTarget?.nama}"? Seluruh data profil anggota ini akan terhapus.`}
-        isLoading={actionLoading}
-      />
-
-      {/* Confirm Delete ALL Transactions Modal */}
-      <ConfirmModal
-        isOpen={isConfirmDeleteAllTxOpen}
-        onClose={() => setIsConfirmDeleteAllTxOpen(false)}
-        onConfirm={handleConfirmDeleteAllTx}
-        title="Hapus SELURUH Transaksi Kas"
-        message="Apakah Anda yakin ingin menghapus SEMUA riwayat transaksi kas? Seluruh catatan pemasukan & pengeluaran akan dikosongkan secara permanen. Tindakan ini tidak dapat dibatalkan."
         isLoading={actionLoading}
       />
 
