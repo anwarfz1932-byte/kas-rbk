@@ -68,10 +68,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <h2 className="text-base sm:text-lg md:text-xl font-bold text-white leading-tight tracking-tight">
                 {currentInfo.title}
               </h2>
-              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-white/15 text-white border border-white/20">
-                <ShieldCheck className="w-3 h-3 text-red-200" />
-                Merah Putih
-              </span>
+
             </div>
             <p className="text-xs text-red-100/90 hidden sm:block mt-0.5">
               {currentInfo.subtitle}

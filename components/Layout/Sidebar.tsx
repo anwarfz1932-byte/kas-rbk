@@ -52,7 +52,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </h1>
             <p className="text-[11px] text-red-600 font-semibold flex items-center gap-1 mt-0.5">
               <ShieldCheck className="w-3.5 h-3.5 text-red-600" />
-              Kas Merah Putih
+              Kas Remaja
             </p>
           </div>
         </div>
