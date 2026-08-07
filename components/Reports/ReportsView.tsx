@@ -55,7 +55,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
     return true; // 'semua'
   });
 
-  // Calculate summary metrics
+  // Calculate summary metrics for filtered period
   const totalPemasukan = filteredTransactions
     .filter((t) => t.jenis === 'Pemasukan')
     .reduce((sum, t) => sum + (t.nominal || 0), 0);
@@ -64,7 +64,18 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
     .filter((t) => t.jenis === 'Pengeluaran')
     .reduce((sum, t) => sum + (t.nominal || 0), 0);
 
-  const saldoAkhir = totalPemasukan - totalPengeluaran;
+  const saldoPeriode = totalPemasukan - totalPengeluaran;
+
+  // Calculate cumulative all-time total cash balance
+  const totalSemuaPemasukan = transactions
+    .filter((t) => t.jenis === 'Pemasukan')
+    .reduce((sum, t) => sum + (t.nominal || 0), 0);
+
+  const totalSemuaPengeluaran = transactions
+    .filter((t) => t.jenis === 'Pengeluaran')
+    .reduce((sum, t) => sum + (t.nominal || 0), 0);
+
+  const totalSaldoKas = totalSemuaPemasukan - totalSemuaPengeluaran;
 
   const getPeriodeLabel = () => {
     if (periodPreset === 'bulan_ini') return 'Bulan Ini';
@@ -79,7 +90,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
   const handlePrintPDF = () => {
     exportReportToPDF(
       filteredTransactions,
-      { totalPemasukan, totalPengeluaran, saldoAkhir },
+      { totalPemasukan, totalPengeluaran, saldoAkhir: totalSaldoKas },
       getPeriodeLabel()
     );
   };
@@ -152,63 +163,93 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
       </Card>
 
       {/* Summary Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Pemasukan */}
-        <Card className="bg-white border-emerald-200 shadow-sm">
+        <Card className="bg-white border-emerald-200 shadow-sm p-5">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
                 Total Pemasukan
               </p>
-              <h4 className="text-2xl font-black text-emerald-600 mt-1">
+              <h4 className="text-xl sm:text-2xl font-black text-emerald-600 mt-1">
                 {formatRupiah(totalPemasukan)}
               </h4>
               <p className="text-[11px] text-slate-500 font-medium mt-1">
-                {filteredTransactions.filter((t) => t.jenis === 'Pemasukan').length} transaksi masuk
+                {filteredTransactions.filter((t) => t.jenis === 'Pemasukan').length} transaksi ({getPeriodeLabel()})
               </p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-xs shrink-0">
-              <TrendingUp className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+              <TrendingUp className="w-5 h-5" />
             </div>
           </div>
         </Card>
 
         {/* Total Pengeluaran */}
-        <Card className="bg-white border-red-200 shadow-sm">
+        <Card className="bg-white border-red-200 shadow-sm p-5">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-bold text-red-800 uppercase tracking-wider">
                 Total Pengeluaran
               </p>
-              <h4 className="text-2xl font-black text-red-600 mt-1">
+              <h4 className="text-xl sm:text-2xl font-black text-red-600 mt-1">
                 {formatRupiah(totalPengeluaran)}
               </h4>
               <p className="text-[11px] text-slate-500 font-medium mt-1">
-                {filteredTransactions.filter((t) => t.jenis === 'Pengeluaran').length} transaksi keluar
+                {filteredTransactions.filter((t) => t.jenis === 'Pengeluaran').length} transaksi ({getPeriodeLabel()})
               </p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-red-600 text-white flex items-center justify-center shadow-xs shrink-0">
-              <TrendingDown className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center shrink-0">
+              <TrendingDown className="w-5 h-5" />
             </div>
           </div>
         </Card>
 
-        {/* Saldo Akhir */}
-        <Card className="bg-red-600 text-white border-red-700 shadow-md">
+        {/* Arus Kas Periode */}
+        <Card className="bg-white border-slate-200 shadow-sm p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-red-100 uppercase tracking-wider">
-                Saldo Akhir Kas
+              <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+                Arus Kas Periode
               </p>
-              <h4 className="text-2xl font-black text-white mt-1">
-                {formatRupiah(saldoAkhir)}
+              <h4 className={`text-xl sm:text-2xl font-black mt-1 ${
+                saldoPeriode >= 0 ? 'text-emerald-700' : 'text-red-700'
+              }`}>
+                {saldoPeriode >= 0 ? `+${formatRupiah(saldoPeriode)}` : formatRupiah(saldoPeriode)}
               </h4>
-              <p className="text-[11px] text-red-100 font-medium mt-1">
-                Status: {saldoAkhir >= 0 ? 'Surplus / Sehat' : 'Defisit'}
+              <p className={`text-[11px] font-bold mt-1 ${
+                saldoPeriode >= 0 ? 'text-emerald-600' : 'text-red-600'
+              }`}>
+                {saldoPeriode >= 0 ? 'Surplus Periode' : 'Defisit Periode'}
               </p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-white text-red-600 flex items-center justify-center shadow-xs shrink-0">
-              <Wallet className="w-6 h-6" />
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+              saldoPeriode >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'
+            }`}>
+              <Wallet className="w-5 h-5" />
+            </div>
+          </div>
+        </Card>
+
+        {/* Saldo Akhir Kas */}
+        <Card className="bg-gradient-to-br from-slate-900 via-slate-800 to-red-950 text-white border-slate-800 shadow-md p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-bold text-red-300 uppercase tracking-wider">
+                Saldo Akhir Kas
+              </p>
+              <h4 className="text-xl sm:text-2xl font-black text-white mt-1">
+                {formatRupiah(totalSaldoKas)}
+              </h4>
+              <div className="flex items-center gap-1.5 mt-1">
+                <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                  totalSaldoKas >= 0 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300'
+                }`}>
+                  {totalSaldoKas >= 0 ? 'Kas Sehat / Tersedia' : 'Kas Defisit'}
+                </span>
+              </div>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center shrink-0">
+              <Wallet className="w-5 h-5" />
             </div>
           </div>
         </Card>
@@ -264,14 +305,13 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
                 <th className="py-3.5 px-4">Tanggal</th>
                 <th className="py-3.5 px-4">Jenis</th>
                 <th className="py-3.5 px-4">Keterangan</th>
-                <th className="py-3.5 px-4">Anggota</th>
                 <th className="py-3.5 px-4 text-right">Nominal</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-white">
               {filteredTransactions.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400 font-medium">
+                  <td colSpan={5} className="py-12 text-center text-slate-400 font-medium">
                     Tidak ada transaksi dalam periode ini.
                   </td>
                 </tr>
@@ -298,9 +338,6 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
                     </td>
                     <td className="py-3 px-4 font-bold text-slate-800">
                       {tx.keterangan}
-                    </td>
-                    <td className="py-3 px-4 text-slate-600 font-medium">
-                      {tx.anggotaNama || '-'}
                     </td>
                     <td
                       className={`py-3 px-4 text-right font-black whitespace-nowrap ${

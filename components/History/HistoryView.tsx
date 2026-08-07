@@ -27,6 +27,7 @@ interface HistoryViewProps {
   onOpenAddModal: (jenis?: 'Pemasukan' | 'Pengeluaran') => void;
   onOpenEditModal: (tx: Transaction) => void;
   onOpenDeleteConfirm: (tx: Transaction) => void;
+  onDeleteAllConfirm?: () => void;
   isAdmin?: boolean;
   onOpenLoginModal?: () => void;
 }
@@ -37,6 +38,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
   onOpenAddModal,
   onOpenEditModal,
   onOpenDeleteConfirm,
+  onDeleteAllConfirm,
   isAdmin = false,
   onOpenLoginModal,
 }) => {
@@ -131,6 +133,18 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
               <FileText className="w-4 h-4 text-red-600" />
               Cetak PDF
             </button>
+
+            {isAdmin && transactions.length > 0 && onDeleteAllConfirm && (
+              <button
+                onClick={onDeleteAllConfirm}
+                className="px-3.5 py-2 rounded-xl bg-red-50 text-red-700 border border-red-300 hover:bg-red-100 font-bold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                title="Hapus seluruh riwayat transaksi"
+              >
+                <Trash2 className="w-4 h-4 text-red-600" />
+                Hapus Semua
+              </button>
+            )}
+
             {/* Primary Button or Login Button */}
             {isAdmin ? (
               <button
@@ -160,7 +174,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Cari keterangan / anggota..."
+              placeholder="Cari keterangan..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -250,7 +264,6 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                 <th className="py-3.5 px-4 border-b border-red-700">Tanggal</th>
                 <th className="py-3.5 px-4 border-b border-red-700">Jenis</th>
                 <th className="py-3.5 px-4 border-b border-red-700">Keterangan</th>
-                <th className="py-3.5 px-4 border-b border-red-700">Anggota</th>
                 <th className="py-3.5 px-4 text-right border-b border-red-700">Nominal</th>
                 <th className="py-3.5 px-4 text-center w-28 border-b border-red-700">
                   {isAdmin ? 'Aksi' : 'Akses'}
@@ -260,7 +273,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
             <tbody className="divide-y divide-slate-100 bg-white">
               {paginatedTransactions.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-slate-400 font-medium">
+                  <td colSpan={6} className="py-12 text-center text-slate-400 font-medium">
                     Tidak ada data transaksi yang cocok.
                   </td>
                 </tr>
@@ -296,9 +309,6 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                       </td>
                       <td className="py-3.5 px-4 font-bold text-slate-900 max-w-xs">
                         {tx.keterangan}
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-600 font-medium">
-                        {tx.anggotaNama || '-'}
                       </td>
                       <td
                         className={`py-3.5 px-4 text-right font-bold whitespace-nowrap ${

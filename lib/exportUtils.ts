@@ -23,7 +23,6 @@ export function exportTransactionsToExcel(
     'Jenis Transaksi': t.jenis,
     'Nominal (Rp)': t.nominal,
     'Keterangan': t.keterangan,
-    'Nama Anggota': t.anggotaNama || '-',
   }));
 
   const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -36,8 +35,7 @@ export function exportTransactionsToExcel(
     { wch: 18 }, // Tanggal
     { wch: 18 }, // Jenis
     { wch: 18 }, // Nominal
-    { wch: 30 }, // Keterangan
-    { wch: 22 }, // Anggota
+    { wch: 35 }, // Keterangan
   ];
 
   XLSX.writeFile(workbook, `${filename}_${new Date().toISOString().slice(0, 10)}.xlsx`);
@@ -114,12 +112,11 @@ export function exportReportToPDF(
     t.jenis,
     formatRupiah(t.nominal),
     t.keterangan || '-',
-    t.anggotaNama || '-',
   ]);
 
   autoTable(doc, {
     startY: startTxY + 4,
-    head: [['No', 'Tanggal', 'Jenis', 'Nominal', 'Keterangan', 'Anggota']],
+    head: [['No', 'Tanggal', 'Jenis', 'Nominal', 'Keterangan']],
     body: tableBody,
     theme: 'striped',
     headStyles: {
@@ -133,12 +130,11 @@ export function exportReportToPDF(
       textColor: [30, 41, 59],
     },
     columnStyles: {
-      0: { cellWidth: 12, halign: 'center' },
-      1: { cellWidth: 32 },
-      2: { cellWidth: 26 },
-      3: { cellWidth: 32, halign: 'right' },
-      4: { cellWidth: 50 },
-      5: { cellWidth: 30 },
+      0: { cellWidth: 14, halign: 'center' },
+      1: { cellWidth: 36 },
+      2: { cellWidth: 28 },
+      3: { cellWidth: 36, halign: 'right' },
+      4: { cellWidth: 68 },
     },
     didParseCell: (data) => {
       if (data.section === 'body' && data.column.index === 2) {

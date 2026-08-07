@@ -187,21 +187,29 @@ export function subscribeTransactions(callback: (transactions: Transaction[]) =>
     return onSnapshot(
       q,
       async (snapshot) => {
+        const hasInitialized = typeof window !== 'undefined' && localStorage.getItem('kas_remaja_tx_initialized');
         if (snapshot.empty) {
-          const seeded: Transaction[] = [];
-          for (const t of initialTransactions) {
-            try {
-              const docRef = await addDoc(collection(db, 'transactions'), t);
-              seeded.push({ ...t, id: docRef.id });
-            } catch (err) {
-              console.warn('Error seeding transaction:', err);
+          if (!hasInitialized) {
+            if (typeof window !== 'undefined') localStorage.setItem('kas_remaja_tx_initialized', 'true');
+            const seeded: Transaction[] = [];
+            for (const t of initialTransactions) {
+              try {
+                const docRef = await addDoc(collection(db, 'transactions'), t);
+                seeded.push({ ...t, id: docRef.id });
+              } catch (err) {
+                console.warn('Error seeding transaction:', err);
+              }
             }
-          }
-          if (seeded.length > 0) {
-            callback(seeded);
+            if (seeded.length > 0) {
+              callback(seeded);
+              return;
+            }
+          } else {
+            callback([]);
             return;
           }
         }
+        if (typeof window !== 'undefined') localStorage.setItem('kas_remaja_tx_initialized', 'true');
         const data: Transaction[] = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...(doc.data() as Omit<Transaction, 'id'>),
@@ -210,24 +218,34 @@ export function subscribeTransactions(callback: (transactions: Transaction[]) =>
       },
       (error) => {
         console.warn('Firestore transaction snapshot error, fallback to local storage:', error);
-        const local = localStorage.getItem('kas_remaja_transactions');
-        if (local) {
-          callback(JSON.parse(local));
-        } else {
+        const hasInitialized = typeof window !== 'undefined' && localStorage.getItem('kas_remaja_tx_initialized');
+        if (!hasInitialized) {
+          if (typeof window !== 'undefined') localStorage.setItem('kas_remaja_tx_initialized', 'true');
           const defaultList = initialTransactions.map((t, idx) => ({ ...t, id: `t-${idx + 1}` }));
-          localStorage.setItem('kas_remaja_transactions', JSON.stringify(defaultList));
+          if (typeof window !== 'undefined') localStorage.setItem('kas_remaja_transactions', JSON.stringify(defaultList));
           callback(defaultList);
+        } else {
+          const local = typeof window !== 'undefined' ? localStorage.getItem('kas_remaja_transactions') : null;
+          callback(local ? JSON.parse(local) : []);
         }
       }
     );
   } catch (err) {
-    const defaultList = initialTransactions.map((t, idx) => ({ ...t, id: `t-${idx + 1}` }));
-    callback(defaultList);
+    const hasInitialized = typeof window !== 'undefined' && localStorage.getItem('kas_remaja_tx_initialized');
+    if (!hasInitialized) {
+      if (typeof window !== 'undefined') localStorage.setItem('kas_remaja_tx_initialized', 'true');
+      const defaultList = initialTransactions.map((t, idx) => ({ ...t, id: `t-${idx + 1}` }));
+      callback(defaultList);
+    } else {
+      const local = typeof window !== 'undefined' ? localStorage.getItem('kas_remaja_transactions') : null;
+      callback(local ? JSON.parse(local) : []);
+    }
     return () => {};
   }
 }
 
 export async function addTransactionData(transaction: Omit<Transaction, 'id'>) {
+  if (typeof window !== 'undefined') localStorage.setItem('kas_remaja_tx_initialized', 'true');
   const payload = cleanPayload(transaction);
   try {
     const docRef = await addDoc(collection(db, 'transactions'), payload);
@@ -244,6 +262,7 @@ export async function addTransactionData(transaction: Omit<Transaction, 'id'>) {
 }
 
 export async function updateTransactionData(id: string, transaction: Partial<Transaction>) {
+  if (typeof window !== 'undefined') localStorage.setItem('kas_remaja_tx_initialized', 'true');
   const payload = cleanPayload(transaction);
   try {
     const docRef = doc(db, 'transactions', id);
@@ -256,6 +275,7 @@ export async function updateTransactionData(id: string, transaction: Partial<Tra
 }
 
 export async function deleteTransactionData(id: string) {
+  if (typeof window !== 'undefined') localStorage.setItem('kas_remaja_tx_initialized', 'true');
   try {
     const docRef = doc(db, 'transactions', id);
     await deleteDoc(docRef);
@@ -263,5 +283,20 @@ export async function deleteTransactionData(id: string) {
     const local: Transaction[] = JSON.parse(localStorage.getItem('kas_remaja_transactions') || '[]');
     const filtered = local.filter((t) => t.id !== id);
     localStorage.setItem('kas_remaja_transactions', JSON.stringify(filtered));
+  }
+}
+
+export async function deleteAllTransactionsData() {
+  if (typeof window !== 'undefined') localStorage.setItem('kas_remaja_tx_initialized', 'true');
+  try {
+    const q = query(collection(db, 'transactions'));
+    const snapshot = await getDocs(q);
+    const deletePromises = snapshot.docs.map((docItem) => deleteDoc(doc(db, 'transactions', docItem.id)));
+    await Promise.all(deletePromises);
+  } catch (err) {
+    console.warn('Firestore bulk delete error, clearing local storage:', err);
+  }
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('kas_remaja_transactions', JSON.stringify([]));
   }
 }

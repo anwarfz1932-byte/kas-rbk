@@ -527,8 +527,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </p>
                     <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                       <span>{formatDateIndonesian(tx.tanggal)}</span>
-                      <span>•</span>
-                      <span>{tx.anggotaNama || 'Umum'}</span>
                     </div>
                   </div>
                 </div>

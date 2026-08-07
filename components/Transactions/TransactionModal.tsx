@@ -159,28 +159,6 @@ const TransactionForm: React.FC<{
         )}
       </div>
 
-      {/* Anggota */}
-      <div>
-        <label className="block text-xs font-bold text-slate-700 mb-1">
-          Pilih Anggota {jenis === 'Pemasukan' ? '(Opsional / Sumber Iuran)' : '(Opsional)'}
-        </label>
-        <div className="relative">
-          <User className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <select
-            value={anggotaId}
-            onChange={(e) => setAnggotaId(e.target.value)}
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs sm:text-sm focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none cursor-pointer"
-          >
-            <option value="">-- Umum / Non-Anggota --</option>
-            {members.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.nama} ({m.jabatan || 'Anggota'})
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
       {/* Keterangan */}
       <div>
         <label className="block text-xs font-bold text-slate-700 mb-1">
