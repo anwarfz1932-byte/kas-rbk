@@ -90,7 +90,12 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ transactions }) => {
   const handlePrintPDF = () => {
     exportReportToPDF(
       filteredTransactions,
-      { totalPemasukan, totalPengeluaran, saldoAkhir: totalSaldoKas },
+      {
+        totalPemasukan,
+        totalPengeluaran,
+        arusKasPeriode: saldoPeriode,
+        saldoAkhir: totalSaldoKas,
+      },
       getPeriodeLabel()
     );
   };

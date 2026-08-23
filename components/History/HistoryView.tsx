@@ -85,6 +85,17 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
     .filter((t) => t.jenis === 'Pengeluaran')
     .reduce((sum, t) => sum + (t.nominal || 0), 0);
 
+  // Totals for all-time transactions
+  const totalSemuaPemasukan = transactions
+    .filter((t) => t.jenis === 'Pemasukan')
+    .reduce((sum, t) => sum + (t.nominal || 0), 0);
+
+  const totalSemuaPengeluaran = transactions
+    .filter((t) => t.jenis === 'Pengeluaran')
+    .reduce((sum, t) => sum + (t.nominal || 0), 0);
+
+  const totalSaldoKas = totalSemuaPemasukan - totalSemuaPengeluaran;
+
   const handleExportExcel = () => {
     exportTransactionsToExcel(filteredTransactions, 'Riwayat_Kas_Remaja');
   };
@@ -99,7 +110,8 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
       {
         totalPemasukan: filteredPemasukan,
         totalPengeluaran: filteredPengeluaran,
-        saldoAkhir: filteredPemasukan - filteredPengeluaran,
+        arusKasPeriode: filteredPemasukan - filteredPengeluaran,
+        saldoAkhir: totalSaldoKas,
       },
       periodLabel
     );

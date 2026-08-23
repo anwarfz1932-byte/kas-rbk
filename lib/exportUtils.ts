@@ -43,7 +43,12 @@ export function exportTransactionsToExcel(
 
 export function exportReportToPDF(
   transactions: TransactionData[],
-  summary: { totalPemasukan: number; totalPengeluaran: number; saldoAkhir: number },
+  summary: {
+    totalPemasukan: number;
+    totalPengeluaran: number;
+    saldoAkhir: number;
+    arusKasPeriode?: number;
+  },
   periodeLabel: string = 'Semua Periode'
 ) {
   const doc = new jsPDF();
@@ -71,13 +76,20 @@ export function exportReportToPDF(
   doc.setTextColor(15, 23, 42);
   doc.text('RINGKASAN REKAPITULASI KAS', 14, 48);
 
+  const arusKas =
+    summary.arusKasPeriode !== undefined
+      ? summary.arusKasPeriode
+      : summary.totalPemasukan - summary.totalPengeluaran;
+  const arusKasStr = (arusKas >= 0 ? '+' : '') + formatRupiah(arusKas);
+
   autoTable(doc, {
     startY: 52,
-    head: [['Total Pemasukan', 'Total Pengeluaran', 'Saldo Akhir Kas']],
+    head: [['Total Pemasukan', 'Total Pengeluaran', 'Arus Kas Periode', 'Saldo Akhir Kas']],
     body: [
       [
         formatRupiah(summary.totalPemasukan),
         formatRupiah(summary.totalPengeluaran),
+        arusKasStr,
         formatRupiah(summary.saldoAkhir),
       ],
     ],
@@ -87,13 +99,32 @@ export function exportReportToPDF(
       textColor: [255, 255, 255],
       fontStyle: 'bold',
       halign: 'center',
-      fontSize: 10,
+      fontSize: 9.5,
     },
     bodyStyles: {
       halign: 'center',
-      fontSize: 10,
+      fontSize: 9.5,
       fontStyle: 'bold',
       textColor: [15, 23, 42],
+    },
+    columnStyles: {
+      0: { cellWidth: 45 },
+      1: { cellWidth: 45 },
+      2: { cellWidth: 46 },
+      3: { cellWidth: 46 },
+    },
+    didParseCell: (data) => {
+      if (data.section === 'body') {
+        if (data.column.index === 0) {
+          data.cell.styles.textColor = [16, 185, 129]; // Emerald
+        } else if (data.column.index === 1) {
+          data.cell.styles.textColor = [225, 29, 72]; // Rose
+        } else if (data.column.index === 2) {
+          data.cell.styles.textColor = arusKas >= 0 ? [5, 150, 105] : [220, 38, 38];
+        } else if (data.column.index === 3) {
+          data.cell.styles.textColor = summary.saldoAkhir >= 0 ? [30, 41, 59] : [220, 38, 38];
+        }
+      }
     },
   });
 
