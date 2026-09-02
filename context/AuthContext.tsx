@@ -111,8 +111,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const cleanLower = cleanUsername.toLowerCase();
     const inputPass = pass.trim();
 
-    // Retrieve custom password if changed by admin, or default to "admin 123"
-    let savedPwd = 'admin 123';
+    // Retrieve custom password if changed by admin, or default to "adminkt07"
+    let savedPwd = 'adminkt07';
     if (typeof window !== 'undefined') {
       const storedPwd = localStorage.getItem('kas_remaja_admin_pwd');
       if (storedPwd) savedPwd = storedPwd;
@@ -120,10 +120,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Accept specified credentials:
     // Username: "remaja blater kidul" or "admin" or similar
-    // Password: "admin 123" or "admin123" or custom saved password
+    // Password: "adminkt07" or custom saved password
     const isValidAdmin =
       (cleanLower === 'remaja blater kidul' || cleanLower === 'admin' || cleanLower.includes('remaja')) &&
-      (inputPass === savedPwd || inputPass === 'admin 123' || inputPass === 'admin123');
+      (inputPass === savedPwd || inputPass === 'adminkt07');
 
     if (isValidAdmin) {
       const adminUser: AdminUser = {
