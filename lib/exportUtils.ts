@@ -54,10 +54,10 @@ export function exportReportToPDF(
   const doc = new jsPDF();
 
   // Header banner / title
-  doc.setFontSize(16);
+  doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(185, 28, 28); // Red 700
-  doc.text('PENGELOLA UANG KAS REMAJA BLATER KIDUL', 14, 18);
+  doc.text('PENGELOLA UANG KAS KARANG TARUNA GUYUB RUKUN BLATER KIDUL', 14, 18);
 
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
@@ -213,7 +213,7 @@ export function exportReportToPDF(
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(148, 163, 184);
     doc.text(
-      `Halaman ${i} dari ${pageCount} — Dokumen Resmi Pengelola Uang Kas Remaja`,
+      `Halaman ${i} dari ${pageCount} — Dokumen Resmi Pengelola Uang Kas Karang Taruna Guyub Rukun Blater Kidul`,
       105,
       288,
       { align: 'center' }

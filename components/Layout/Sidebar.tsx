@@ -47,8 +47,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <Wallet className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="font-bold text-base tracking-tight text-slate-900 leading-tight">
-              Remaja Blater Kidul
+            <h1 className="font-bold text-sm tracking-tight text-slate-900 leading-tight">
+              Karang Taruna Guyub Rukun Blater Kidul
             </h1>
             <p className="text-[11px] text-red-600 font-semibold flex items-center gap-1 mt-0.5">
               <ShieldCheck className="w-3.5 h-3.5 text-red-600" />
@@ -97,7 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80">
           <p className="text-xs font-bold text-slate-800 flex items-center gap-2">
             <Building2 className="w-4 h-4 text-red-600 shrink-0" />
-            Remaja Blater Kidul
+            Karang Taruna Guyub Rukun Blater Kidul
           </p>
           <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
             Sistem Pencatatan Uang Kas Berbasis Transparansi & Akuntabilitas

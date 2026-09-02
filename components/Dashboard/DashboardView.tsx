@@ -192,7 +192,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-red-50 text-xs font-semibold mb-3 border border-white/20">
               <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-              Remaja Blater Kidul
+              Karang Taruna Guyub Rukun Blater Kidul
             </div>
             <p className="text-xs sm:text-sm text-red-100 font-medium">Total Saldo Kas Saat Ini</p>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white mt-1">

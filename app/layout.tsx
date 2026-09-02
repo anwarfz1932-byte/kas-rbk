@@ -16,8 +16,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Pengelola Uang Kas Remaja Blater Kidul',
-  description: 'Aplikasi pengelolaan keuangan kas remaja transparan dan akuntabel',
+  title: 'Pengelola Uang Kas Karang Taruna Guyub Rukun Blater Kidul',
+  description: 'Aplikasi pengelolaan keuangan kas Karang Taruna Guyub Rukun Blater Kidul transparan dan akuntabel',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

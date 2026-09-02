@@ -216,7 +216,7 @@ export default function MainPage() {
       <div className="min-h-screen bg-red-50 flex flex-col items-center justify-center p-4">
         <Loader2 className="w-10 h-10 text-red-600 animate-spin mb-3" />
         <p className="text-sm font-bold text-slate-800">
-          Memuat Sistem Kas Remaja Merah Putih...
+          Memuat Sistem Kas Karang Taruna Guyub Rukun Blater Kidul...
         </p>
       </div>
     );

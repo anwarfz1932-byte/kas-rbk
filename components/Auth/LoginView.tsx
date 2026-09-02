@@ -48,7 +48,7 @@ export const LoginView: React.FC = () => {
             <Wallet className="w-5 h-5" />
           </div>
           <span className="font-bold text-slate-800 text-base">
-            Kas Remaja Blater Kidul
+            Karang Taruna Guyub Rukun Blater Kidul
           </span>
         </div>
       </div>

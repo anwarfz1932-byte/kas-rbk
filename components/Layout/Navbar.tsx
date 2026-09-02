@@ -14,8 +14,8 @@ interface NavbarProps {
 
 const tabTitles: Record<ViewTab, { title: string; subtitle: string }> = {
   dashboard: {
-    title: 'Dashboard Kas Remaja',
-    subtitle: 'Ringkasan posisi keuangan kas Remaja Blater Kidul',
+    title: 'Dashboard Kas KT.GRBK',
+    subtitle: 'Ringkasan posisi keuangan kas Karang Taruna Guyub Rukun Blater Kidul',
   },
   transactions: {
     title: 'Pencatatan Transaksi Kas',
