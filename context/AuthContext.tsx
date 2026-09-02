@@ -12,12 +12,15 @@ import {
 import { auth, db } from '../lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
+export const CURRENT_SESSION_VERSION = 'v3_adminktgrbk_2026';
+
 export interface AdminUser {
   uid: string;
   email: string | null;
   name: string;
   role: 'admin';
   isDemo?: boolean;
+  sessionVersion?: string;
 }
 
 interface AuthContextType {
@@ -44,7 +47,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const savedAdmin = localStorage.getItem('kas_remaja_admin_session');
       if (savedAdmin) {
         try {
-          return JSON.parse(savedAdmin);
+          const parsed = JSON.parse(savedAdmin);
+          // Only validate if session has the latest session version and updated admin UID
+          if (
+            parsed &&
+            parsed.sessionVersion === CURRENT_SESSION_VERSION &&
+            parsed.uid === 'admin-kt-grbk'
+          ) {
+            return parsed;
+          } else {
+            // Invalidate any older sessions from all previous devices
+            localStorage.removeItem('kas_remaja_admin_session');
+            localStorage.removeItem('kas_remaja_demo_admin');
+          }
         } catch (e) {
           localStorage.removeItem('kas_remaja_admin_session');
         }
@@ -68,15 +83,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             adminData = {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
-              name: data.name || data.username || firebaseUser.email?.split('@')[0] || 'Admin Kas',
+              name: data.name || data.username || 'ADMIN KT GRBK',
               role: 'admin',
+              sessionVersion: CURRENT_SESSION_VERSION,
             };
           } else {
             adminData = {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
-              name: firebaseUser.email?.split('@')[0] || 'Admin Kas',
+              name: 'ADMIN KT GRBK',
               role: 'admin',
+              sessionVersion: CURRENT_SESSION_VERSION,
             };
             await setDoc(userDocRef, {
               email: firebaseUser.email,
@@ -90,13 +107,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser({
             uid: firebaseUser.uid,
             email: firebaseUser.email,
-            name: firebaseUser.email?.split('@')[0] || 'Admin Kas',
+            name: 'ADMIN KT GRBK',
             role: 'admin',
+            sessionVersion: CURRENT_SESSION_VERSION,
           });
         }
       } else {
-        if (typeof window !== 'undefined' && !localStorage.getItem('kas_remaja_admin_session')) {
-          setUser(null);
+        if (typeof window !== 'undefined') {
+          const saved = localStorage.getItem('kas_remaja_admin_session');
+          if (!saved) {
+            setUser(null);
+          }
         }
       }
       setLoading(false);
@@ -119,18 +140,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // Accept specified credentials:
-    // Username: "remaja blater kidul" or "admin" or similar
+    // Username: "ADMIN KT GRBK" (case-insensitive, e.g. "admin kt grbk", "adminktgrbk", "admin")
     // Password: "adminkt07" or custom saved password
+    const isMatchingUsername =
+      cleanLower === 'admin kt grbk' ||
+      cleanLower === 'adminktgrbk' ||
+      cleanLower === 'admin' ||
+      cleanUsername.toUpperCase() === 'ADMIN KT GRBK';
+
     const isValidAdmin =
-      (cleanLower === 'remaja blater kidul' || cleanLower === 'admin' || cleanLower.includes('remaja')) &&
+      isMatchingUsername &&
       (inputPass === savedPwd || inputPass === 'adminkt07');
 
     if (isValidAdmin) {
       const adminUser: AdminUser = {
-        uid: 'admin-remaja-blater-kidul',
-        email: 'remajablaterkidul@kasremaja.org',
-        name: cleanUsername === 'admin' ? 'Remaja Blater Kidul' : cleanUsername,
+        uid: 'admin-kt-grbk',
+        email: 'adminktgrbk@kasremaja.org',
+        name: 'ADMIN KT GRBK',
         role: 'admin',
+        sessionVersion: CURRENT_SESSION_VERSION,
       };
       localStorage.setItem('kas_remaja_admin_session', JSON.stringify(adminUser));
       setUser(adminUser);

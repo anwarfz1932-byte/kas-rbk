@@ -84,7 +84,7 @@ export const LoginView: React.FC = () => {
                 <User className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="remaja blater kidul"
+                  placeholder="ADMIN KT GRBK"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
